@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>一些有意思的算法题 - heyu Blogs</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="heyu Blogs"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="heyu Blogs"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="不想刷LeetCode啊！！！ 言归正传，写代码还是很有意思的事情。我大学读的是数学专业，一开始只觉得写代码是计算机专业该干的事，后来惊奇地发现，有些算法莫名与那些恐怖的数学知识相关，而这些算法都是为了解决一个具体的有趣问题。这里整理一些LeetCode中有趣的题目，更多还是结合数学的内容。"><meta property="og:type" content="blog"><meta property="og:title" content="一些有意思的算法题"><meta property="og:url" content="http://example.com/2025/12/11/%E4%B8%80%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E7%AE%97%E6%B3%95%E9%A2%98/"><meta property="og:site_name" content="heyu Blogs"><meta property="og:description" content="不想刷LeetCode啊！！！ 言归正传，写代码还是很有意思的事情。我大学读的是数学专业，一开始只觉得写代码是计算机专业该干的事，后来惊奇地发现，有些算法莫名与那些恐怖的数学知识相关，而这些算法都是为了解决一个具体的有趣问题。这里整理一些LeetCode中有趣的题目，更多还是结合数学的内容。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://example.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-12-12%20094005.png"><meta property="article:published_time" content="2025-12-11T09:31:10.000Z"><meta property="article:modified_time" content="2025-12-12T01:44:22.148Z"><meta property="article:author" content="heyu58"><meta property="article:tag" content="算法"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-12-12%20094005.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2025/12/11/%E4%B8%80%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E7%AE%97%E6%B3%95%E9%A2%98/"},"headline":"一些有意思的算法题","image":["http://example.com/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-12-12%20094005.png"],"datePublished":"2025-12-11T09:31:10.000Z","dateModified":"2025-12-12T01:44:22.148Z","author":{"@type":"Person","name":"heyu58"},"publisher":{"@type":"Organization","name":"heyu Blogs","logo":{"@type":"ImageObject","url":"http://example.com/img/logo.svg"}},"description":"不想刷LeetCode啊！！！ 言归正传，写代码还是很有意思的事情。我大学读的是数学专业，一开始只觉得写代码是计算机专业该干的事，后来惊奇地发现，有些算法莫名与那些恐怖的数学知识相关，而这些算法都是为了解决一个具体的有趣问题。这里整理一些LeetCode中有趣的题目，更多还是结合数学的内容。"}</script><link rel="canonical" href="http://example.com/2025/12/11/%E4%B8%80%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E7%AE%97%E6%B3%95%E9%A2%98/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-1-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="heyu Blogs" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/heyu58"><i class="fab fa-github"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-12"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2025-12-11T09:31:10.000Z" title="11/12/2025, 17:31:10">2025-12-11</time>发表</span><span class="level-item"><time dateTime="2025-12-12T01:44:22.148Z" title="12/12/2025, 09:44:22">2025-12-12</time>更新</span><span class="level-item">4 分钟读完 (大约620个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">一些有意思的算法题</h1><div class="content"><p>不想刷LeetCode啊！！！</p>
+<p>言归正传，写代码还是很有意思的事情。我大学读的是数学专业，一开始只觉得写代码是计算机专业该干的事，后来惊奇地发现，有些算法莫名与那些恐怖的数学知识相关，而这些算法都是为了解决一个具体的有趣问题。这里整理一些LeetCode中有趣的题目，更多还是结合数学的内容。</p>
+<span id="more"></span>
+
+<h3 id="Q1-爬楼梯"><a href="#Q1-爬楼梯" class="headerlink" title="Q1:爬楼梯"></a>Q1:爬楼梯</h3><p>这个问题我应该是最早在电影《少年班》里看到的，那个神童摇着龟壳，根据掉落铜钱来回答的场景太神棍，印象很深。<br><img src="/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202025-12-12%20094005.png" alt="alt text"></p>
+<p>假设你正在爬楼梯。需要 n 阶你才能到达楼顶。每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？比如2级台阶有两种方法：1+1、2；3级台阶有三种方法：1+1+1、1+2、2+1；</p>
+<p>从递归的角度容易考虑到，记上$n$级台阶的方法数量为$f(n)$，那么前一步一定在$n-1$级台阶或者$n-2$级台阶，有$f(n)&#x3D;f(n-1)+f(n-2)$等式成立。这就是斐波那契数列的通项$1,2,3,5,8,13,21….$，自然很容易的写出这样的算法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">climbStairs</span>(<span class="params">self, n: <span class="built_in">int</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="keyword">if</span> n &lt;= <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">return</span> n</span><br><span class="line">        <span class="comment"># Fibonacci-like sequence</span></span><br><span class="line">        first, second = <span class="number">1</span>, <span class="number">2</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>, n + <span class="number">1</span>):</span><br><span class="line">            first, second = second, first + second</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> second</span><br></pre></td></tr></table></figure>
+
+<p>学过线性代数的你一定会想到，</p>
+<h3 id="Q2：只出现一次的数"><a href="#Q2：只出现一次的数" class="headerlink" title="Q2：只出现一次的数"></a>Q2：只出现一次的数</h3><p>给你一个 非空 整数数组 nums ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。你必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。</p>
+<p>这道题难度easy，但是其解法中的<strong>位运算</strong>方法实在太优雅（依赖于其余数只出现偶数次），让我想起很多年前见到过一个位运算求N皇后问题的牛逼解法。这正好借这个机会展示二进制的魅力。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">singleNumber</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type nums: List[int]</span></span><br><span class="line"><span class="string">        :rtype: int</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        n = <span class="built_in">len</span>(nums)</span><br><span class="line">        index = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">            <span class="comment"># 异或有结合律和交换律</span></span><br><span class="line">            index ^= nums[i]</span><br><span class="line">        <span class="keyword">return</span> index</span><br></pre></td></tr></table></figure>
+</div><div class="article-licensing box"><div class="licensing-title"><p>一些有意思的算法题</p><p><a href="http://example.com/2025/12/11/一些有意思的算法题/">http://example.com/2025/12/11/一些有意思的算法题/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>heyu58</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2025-12-11</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2025-12-12</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E7%AE%97%E6%B3%95/">算法</a></div><div class="notification is-danger">You need to set <code>install_url</code> to use ShareThis. Please set it in <code>_config.yml</code>.</div></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" href="/" target="_blank" rel="noopener" data-type="afdian"><span class="icon is-small"><i class="fas fa-charging-station"></i></span><span>爱发电</span></a><a class="button donate" data-type="alipay"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>支付宝</span><span class="qrcode"><img src="/" alt="支付宝"></span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="buymeacoffee"><span class="icon is-small"><i class="fas fa-coffee"></i></span><span>送我杯咖啡</span></a><a class="button donate" href="/" target="_blank" rel="noopener" data-type="patreon"><span class="icon is-small"><i class="fab fa-patreon"></i></span><span>Patreon</span></a><div class="notification is-danger">You forgot to set the <code>business</code> or <code>currency_code</code> for Paypal. Please set it in <code>_config.yml</code>.</div><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechat.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2025/12/11/TransformerDecoder/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">TransformerDecoder</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2025/12/10/Attention/"><span class="level-item">当代孔乙己-Attention架构的四种写法</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card" id="comments"><div class="card-content"><h3 class="title is-5">评论</h3><div class="notification is-danger">You forgot to set the <code>shortname</code> for Disqus. Please set it in <code>_config.yml</code>.</div></div></div></div><!--!--><div class="column column-right  order-3 is-sticky"><!--!--></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="heyu Blogs" height="28"></a><p class="is-size-7"><span>&copy; 2025 heyu58</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script data-pjax src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script data-pjax src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/mhchem.min.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/javascript" id="MathJax-script" async>MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      chtml: {
+        matchFontHeight: false
+      }
+    };</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script src="/js/pjax.js"></script><!--!--><!--!--><!--!--><script data-pjax src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script data-pjax src="/js/insight.js" defer></script><script data-pjax>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
