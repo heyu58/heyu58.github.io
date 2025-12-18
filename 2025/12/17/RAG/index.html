@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>RAG检索增强生成模型 - heyu Blogs</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="heyu Blogs"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="heyu Blogs"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="RAG技术的诞生源于生成模型无法避免的幻觉问题。具体来说纯生成模型，尤其是基于大语言模型的生成模型，虽然在生成连贯、流畅的文本方面表现出色，但它们有时会产生与事实不符的信息。这种现象被称为幻觉（hallucination）。幻觉的产生通常是由于模型在训练过程中学习到的信息是不完整的，或者模型在尝试生成看似合理但实际上并非基于真实信息的内容时过度自信。"><meta property="og:type" content="blog"><meta property="og:title" content="RAG检索增强生成模型"><meta property="og:url" content="http://example.com/2025/12/17/RAG/"><meta property="og:site_name" content="heyu Blogs"><meta property="og:description" content="RAG技术的诞生源于生成模型无法避免的幻觉问题。具体来说纯生成模型，尤其是基于大语言模型的生成模型，虽然在生成连贯、流畅的文本方面表现出色，但它们有时会产生与事实不符的信息。这种现象被称为幻觉（hallucination）。幻觉的产生通常是由于模型在训练过程中学习到的信息是不完整的，或者模型在尝试生成看似合理但实际上并非基于真实信息的内容时过度自信。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://example.com/img/rag2.png"><meta property="article:published_time" content="2025-12-17T11:55:48.900Z"><meta property="article:modified_time" content="2025-12-17T14:03:49.819Z"><meta property="article:author" content="heyu58"><meta property="article:tag" content="大语言模型"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/img/rag2.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2025/12/17/RAG/"},"headline":"RAG检索增强生成模型","image":["http://example.com/img/rag2.png"],"datePublished":"2025-12-17T11:55:48.900Z","dateModified":"2025-12-17T14:03:49.819Z","author":{"@type":"Person","name":"heyu58"},"publisher":{"@type":"Organization","name":"heyu Blogs","logo":{"@type":"ImageObject","url":"http://example.com/img/logo.svg"}},"description":"RAG技术的诞生源于生成模型无法避免的幻觉问题。具体来说纯生成模型，尤其是基于大语言模型的生成模型，虽然在生成连贯、流畅的文本方面表现出色，但它们有时会产生与事实不符的信息。这种现象被称为幻觉（hallucination）。幻觉的产生通常是由于模型在训练过程中学习到的信息是不完整的，或者模型在尝试生成看似合理但实际上并非基于真实信息的内容时过度自信。"}</script><link rel="canonical" href="http://example.com/2025/12/17/RAG/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="heyu Blogs" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/heyu58"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2025-12-17T11:55:48.900Z" title="17/12/2025, 19:55:48">2025-12-17</time>发表</span><span class="level-item"><time dateTime="2025-12-17T14:03:49.819Z" title="17/12/2025, 22:03:49">2025-12-17</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/LLM%E5%AD%A6%E4%B9%A0%E7%B3%BB%E5%88%97/">LLM学习系列</a></span><span class="level-item">29 分钟读完 (大约4367个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">RAG检索增强生成模型</h1><div class="content"><p>RAG技术的诞生源于生成模型无法避免的<strong>幻觉问题</strong>。具体来说纯生成模型，尤其是基于大语言模型的生成模型，虽然在生成连贯、流畅的文本方面表现出色，但它们有时会产生与事实不符的信息。这种现象被称为幻觉（hallucination）。幻觉的产生通常是由于模型在训练过程中学习到的信息是不完整的，或者模型在尝试生成看似合理但实际上并非基于真实信息的内容时过度自信。</p>
+<span id="more"></span>
+
+<h3 id="什么是RAG？"><a href="#什么是RAG？" class="headerlink" title="什么是RAG？"></a>什么是RAG？</h3><p>RAG全称为检索增强生成，(Retrieval Augmented Generation，RAG)。从名字来看，这种技术结合了检索 (Retrieval) 和生成 (Generation) 两个过程，旨在提高机器生成文本的相关性、准确性和多样性。RAG技术使用外部数据源的信息辅助文本生成，通过访问外部数据库检索得到有关的信息（通常以chunk形式返回所需信息）。把检索得到的信息与用户源问题合并为提示，让大语言模型从包含外部信息的提示中学习知识（in-context learning）并生成正确答案。从而缓解了幻觉问题。（缓解幻觉问题还有提示词约束，CoT推理链，RLHF反馈等等方法）</p>
+<p>RAG的核心部件可以参考流程图</p>
+<img src="/img/rag1.png" width="90%" height="90%">
+
+<ul>
+<li><p>向量数据库（Vector Database）：一种专门设计用来高效存储和检索向量数据的数据库系统。数据经常以高维向量的形式存在，比如文本、图片或其他类型的数据经过嵌入模型转换成的向量。这些向量代表了原始数据的特征和语义信息，可以用于各种相似性搜索和数据分析任务。向量数据库通过优化这类向量数据的存储结构和检索算法，提供了一种高效率的方式来处理大规模向量集合。检索增强生成模型的一个关键步骤是从大规模数据集中检索相关信息，这些信息随后用于辅助生成模型产生回答。向量数据库能够快速检索到与查询向量最相似的数据向量，从而大大加快了这一过程，提高了信息检索的效率和准确性。</p>
+</li>
+<li><p>查询检索（Retriever）：检索器可以从一个大规模的文档集合或知识库中检索出与给定查询最相关的信息，这个过程是通过比较查询的表示（通常是一个向量）和文档集合中每个文档的表示来完成的，通过检索器，检索增强生成系统能够访问到更广泛的、实时更新的信息，从而扩展了模型处理问题时的知识范围。目标是找到最能帮助生成系统回答查询的信息。</p>
+</li>
+<li><p>重新排序（Re-ranker）：我们可以在许多文本文档中执行语义搜索，相关文档可能有数万到数百亿个。但由于大语言模型对于传递文本量有限制，我们需要对文档质量进行排序，然后返回top-k文档用于下一步检索生成。在重排器中，给定查询和文档对，将输出相似性得分。我们使用这个分数根据与我们的查询的相关性对文档进行重新排序。</p>
+</li>
+<li><p>生成回答（Generator）<br>在整个检索增强生成系统中，生成器是负责将检索到的信息生成最终文本输出的组件，它利用这些检索到的信息来构建回答或完成特定的文本生成任务。生成器将检索到的多个文档或信息片段综合考虑，融合它们的内容来构建一个连贯、逻辑一致的输出。这个过程涉及到语言生成的各个方面，包括词汇选择、语法结构和内容连贯性等。</p>
+</li>
+</ul>
+<p>因为检索增强生成不仅用于事实推理，还可以被用于生成代码、图像等，因此面对不同下游任务，生成器模型已经衍生出多种变体。<em>Transformer</em>模型经常应用于文本生成任务；<em>VisualGPT</em>常用于从图像生成文本描述；<em>Stable Diffusion</em>主要用于根据文本提示生成图像；<em>Codex</em>则专注于从文本描述生成代码。</p>
+<h3 id="外部数据：知识文档的准备"><a href="#外部数据：知识文档的准备" class="headerlink" title="外部数据：知识文档的准备"></a>外部数据：知识文档的准备</h3><p>文件类型多样，知识源可能有多种形式，如Word，TXT文件，CSV数据表，Excel表格，PDF文件，HTML网页，图片，视频等等（这些内容已经涉及多模态）</p>
+<p>所以第一步就是进行文档加载器（PDF提取）或多模态技术（OCR，矢量图检索），将知识源（私有，专业，时效）转化为大语言模型能够理解的文本序列信息。</p>
+<p>此外，文档可能会过长，所以另一项关键步骤<strong>文档切片</strong>，英文名chunk。关于文档分块方法的选择，有以下参考：</p>
+<ul>
+<li>固定大小分块：nothing to talk。通常会保持块之间的一些重叠，以确保语义的连贯性。</li>
+<li>内容分块：根据标点符号或段落分割，或直接用更高级的NLTK或spaCy库提供的句子分割功能。</li>
+<li>递归分块：多数情况下推荐方法。具体来说，在Langchain中会先通过段落换行符分割。然后检查这些块的大小，如果不超过一定阈值，则该块被保留。对于大小超过标准的块，使用单换行符再次分割。以此类推，不断根据块大小更新更小的分块规则（如空格，句号）。这种方法显然更加灵活，挑战也在此：需要制定精细规则来决定何时和如何分割文本。</li>
+<li>特殊结构分块：主要针对Markdown、Latex、Code等特殊文件。</li>
+</ul>
+<p>然而还是要决定chunk的大小，如何选择分块大小呢？</p>
+<blockquote>
+<ul>
+<li>不同的嵌入模型有最佳的输入大小，如Openai的text-embedding-ada-002的模型在256或512大小的chunk上效果更好</li>
+<li>长篇文章或文档等，较大分块。对社媒评论或帖子，小分块。</li>
+<li>尝试从128开始。</li>
+</ul>
+</blockquote>
+<h3 id="向量检索准备：嵌入模型与向量数据库"><a href="#向量检索准备：嵌入模型与向量数据库" class="headerlink" title="向量检索准备：嵌入模型与向量数据库"></a>向量检索准备：嵌入模型与向量数据库</h3><p>嵌入模型的核心任务是将文本转换为向量形式，存储到专用的向量数据库中。如果选择Word2Vec模型，尽管功能强大，但其生成的词向量是静态的。一旦模型训练完成，每个词的向量就固定不变，这在处理一词多义情况时可能存在问题。而如果选择自注意力机制的模型，如BERT，能够提供动态的词义理解。可以调整不同语义下的词向量。</p>
+<p>有些项目为了让模型对特定垂直领域的词汇有更好的理解，会嵌入模型进行微调。但在这里我们并不推荐这种方法，一方面其对训练数据的质量有较高要求，另一方面也需要较多的人力物力投入，且效果未必理想，最终得不偿失。在这种情况下，对于具体应该如何选择嵌入模型，可以参考Hugging Face推出的<a target="_blank" rel="noopener" href="https://huggingface.co/spaces/mteb/leaderboard">嵌入模型排行榜</a>，这个排行榜提供了多种模型的性能比较，能帮助我们做出更明智的选择。同时，要注意并非所有嵌入模型都支持中文，因此在选择时应查阅模型说明。</p>
+<p>关于向量数据库也有一些需要注意的地方。只使用<strong>向量搜索</strong>可能不够，最好使用一些原元数据以支持<strong>关键词查询</strong>的方法。</p>
+<p>当在向量数据库中存储向量数据时，某些数据库支持将向量与元数据（即非向量化的数据）一同存储。为向量添加元数据标注是一种提高检索效率的有效策略，它在处理搜索结果时发挥着重要作用。</p>
+<p>例如，日期就是一种常见的元数据标签。它能够帮助我们根据时间顺序进行筛选。设想一下，如果我们正在开发一款允许用户查询他们电子邮件历史记录的应用程序。在这种情况下，日期最近的电子邮件可能与用户的查询更相关。然而，从嵌入的角度来看，我们无法直接判断这些邮件与用户查询的相似度。通过将每封电子邮件的日期作为元数据附加到其嵌入中，我们可以在检索过程中优先考虑最近日期的邮件，从而提高搜索结果的相关性。</p>
+<p>此外，我们还可以添加诸如章节或小节的引用，文本的关键信息、小节标题或关键词等作为元数据。这些元数据不仅有助于改进知识检索的准确性，还能为最终用户提供更加丰富和精确的搜索体验。</p>
+<h3 id="查询检索"><a href="#查询检索" class="headerlink" title="查询检索"></a>查询检索</h3><p>在RAG系统中，用户的查询问题被转化为向量，然后在向量数据库中进行匹配。不难想象，查询的措辞会直接影响搜索结果。如果搜索结果不理想，可以尝试以下几种方法对问题进行重写，以提升召回效果：</p>
+<ul>
+<li><p>结合历史对话的重新表述：在向量空间中，对人类来说看似相同的两个问题其向量大小并不一定很相似。我们可以直接利用LLM 重新表述问题来进行尝试。此外，在进行多轮对话时，用户的提问中的某个词可能会指代上文中的部分信息，因此可以将历史信息和用户提问一并交给LLM重新表述。</p>
+</li>
+<li><p>假设文档嵌入（HyDE）：HyDE的核心思想是接收用户提问后，先让LLM在没有外部知识的情况下生成一个假设性的回复。然后，将这个假设性回复和原始查询一起用于向量检索。假设回复可能包含虚假信息，但蕴含着LLM认为相关的信息和文档模式，有助于在知识库中寻找类似的文档。</p>
+</li>
+<li><p>退后提示（Step Back Prompting）：如果果原始查询太复杂或返回的信息太广泛，我们可以选择生成一个抽象层次更高的“退后”问题，与原始问题一起用于检索，以增加返回结果的数量。例如，原问题是“桌子君在特定时期去了哪所学校”，而退后问题可能是关于他的“教育历史”。这种更高层次的问题可能更容易找到答案。</p>
+</li>
+<li><p>多查询检索&#x2F;多路召回（Multi Query Retrieval）：使用LLM生成多个搜索查询，特别适用于一个问题可能需要依赖多个子问题的情况。</p>
+</li>
+</ul>
+<p>通过这些方法，RAG系统能够更精准地处理和响应复杂的用户查询，从而提升整体的搜索效率和准确性。</p>
+<p>终于我们把查询问题准备好了，可以进入向量数据库进行检索。在具体的检索过程中，我们可以根据向量数据库的特定设置来优化一些检索参数，以下是一些常见的可设定参数：</p>
+<ul>
+<li><p>稀疏和稠密搜索权重：稠密搜索即通过向量进行搜索。然而，在某些场景下可能存在限制，此时可以尝试使用原始字符串进行关键字匹配的稀疏搜索。一种有效的稀疏搜索算法是<strong>最佳匹配25（BM25）</strong>，它基于统计输入短语中的单词频率，频繁出现的单词得分较低，而稀有的词被视为关键词，得分会较高。我们可以结合稀疏和稠密搜索得出最终结果。向量数据库通常允许设定两者对最终结果评分的权重比例，如0.6表示40%的得分来自稀疏搜索，60%来自稠密搜索。</p>
+</li>
+<li><p>结果数量（topK）：检索结果的数量是另一个关键因素。足够的检索结果可以确保系统覆盖到用户查询的各个方面。在回答多方面或复杂问题时，更多的结果提供了丰富的语境，有助于RAG系统更好地理解问题的上下文和隐含细节。但需注意，结果数量过多可能导致信息过载，降低回答准确性并增加系统的时间和资源成</p>
+</li>
+<li><p>相似度度量方法：计算两个向量相似度的方法也是一个可选参数。这包括使用欧式距离和Jaccard距离计算两个向量的差异，以及利用余弦相似度衡量夹角的相似性。通常，余弦相似度更受青睐，因为它不受向量长度的影响，只反映方向上的相似度。这使得模型能够忽略文本长度差异，专注于内容的语义相似性。需要注意的是，并非所有嵌入模型都支持所有度量方法，具体可参考所用嵌入模型的说明。</p>
+</li>
+</ul>
+<h3 id="生成回答"><a href="#生成回答" class="headerlink" title="生成回答"></a>生成回答</h3><p>终于我们来到最后一步——LLM生成回答。LLM是生成响应的核心组件。与嵌入模型类似，可以根据自己的需求选择LLM，例如开放模型与专有模型、推理成本、上下文长度等。此外，可以使用一些LLM开发框架来搭建RAG系统，比如，LlamaIndex或LangChain。这两个框架都拥有比较好用的debugging工具，可以让我们定义回调函数，查看使用了哪些上下文，检查检索结果来自哪个文档等等。</p>
+<h3 id="如何评价RAG项目效果？"><a href="#如何评价RAG项目效果？" class="headerlink" title="如何评价RAG项目效果？"></a>如何评价RAG项目效果？</h3><p>针对检索环节评估：</p>
+<ul>
+<li>MRR平均倒数排名（Mean Reciprocal Rank）：用于衡量搜索引擎，推荐系统等根据查询返回多个结果的相关性。结果列表中，第i个结果匹配，分数为$\dfrac{1}{i}$</li>
+<li>Hits Rate命中率</li>
+<li>NDCG</li>
+</ul>
+<p>针对生成环节评估：</p>
+<ul>
+<li>非量化：完整性、正确性、相关性（主观打分）</li>
+<li>量化：Rouge-L方法需要准备人工的标准摘要集，将生成内容与标准摘要集对比，计算最长公共子序列来衡量生成文本和参考文本的相似性。计算<em>精确率</em>与<em>召回率</em>，最终得到<em>F1-score</em>作为Rouge-L最终分数。<blockquote>
+<p>由于Rouge-L注重最长公共子序列，这意味它比Rouge-1或Rouge-2更能衡量文本生成的结构和顺序是否与参考文本接近。因此，它在衡量文段的连贯性和句子顺序上具有优势。</p>
+</blockquote>
+</li>
+</ul>
+<h3 id="RAG项目常见的优化策略（总结）"><a href="#RAG项目常见的优化策略（总结）" class="headerlink" title="RAG项目常见的优化策略（总结）"></a>RAG项目常见的优化策略（总结）</h3><p>RAG项目各个环节均有着极大的优化空间，下面我们穿插12个具体的优化策略来一次讲解。下面介绍的方法在AI开发框架langchain和LLamaindex中有具体实现。</p>
+<blockquote>
+<p>1、知识文档准备阶段：（1）数据清洗（2）分块处理</p>
+</blockquote>
+<blockquote>
+<p>2、嵌入模型：（1）优选嵌入模型</p>
+</blockquote>
+<blockquote>
+<p>3、向量数据库：（1）元数据（支持关键词查询）</p>
+</blockquote>
+<blockquote>
+<p>4、查询索引阶段：（1）多级索引（2）索引&#x2F;查询算法（3）查询转换（4）检索参数（5）高级检索策略（6）重排模型</p>
+</blockquote>
+<blockquote>
+<p>5、生成回答阶段：（1）提示词（2）大语言模型</p>
+</blockquote>
+</div><div class="article-licensing box"><div class="licensing-title"><p>RAG检索增强生成模型</p><p><a href="http://example.com/2025/12/17/RAG/">http://example.com/2025/12/17/RAG/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>heyu58</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2025-12-17</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2025-12-17</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="tagsd:\Blogs\source\img\wechat.jpg/大语言模型/">大语言模型</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://github.com/apps/utterances" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechat.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2025/12/17/Distillation/"><span class="level-item">Distillation</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card" id="comments"><div class="card-content"><h3 class="title is-5">评论</h3><script src="https://utteranc.es/client.js" repo="heyu58/SGR" issue-number="100" label="some-issue-label" theme="github-light" crossorigin="anonymous" async></script></div></div></div><!--!--><div class="column column-right is-4-tablet is-4-desktop is-4-widescreen  order-3 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#什么是RAG？"><span class="level-left"><span class="level-item">1</span><span class="level-item">什么是RAG？</span></span></a></li><li><a class="level is-mobile" href="#外部数据：知识文档的准备"><span class="level-left"><span class="level-item">2</span><span class="level-item">外部数据：知识文档的准备</span></span></a></li><li><a class="level is-mobile" href="#向量检索准备：嵌入模型与向量数据库"><span class="level-left"><span class="level-item">3</span><span class="level-item">向量检索准备：嵌入模型与向量数据库</span></span></a></li><li><a class="level is-mobile" href="#查询检索"><span class="level-left"><span class="level-item">4</span><span class="level-item">查询检索</span></span></a></li><li><a class="level is-mobile" href="#生成回答"><span class="level-left"><span class="level-item">5</span><span class="level-item">生成回答</span></span></a></li><li><a class="level is-mobile" href="#如何评价RAG项目效果？"><span class="level-left"><span class="level-item">6</span><span class="level-item">如何评价RAG项目效果？</span></span></a></li><li><a class="level is-mobile" href="#RAG项目常见的优化策略（总结）"><span class="level-left"><span class="level-item">7</span><span class="level-item">RAG项目常见的优化策略（总结）</span></span></a></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="heyu Blogs" height="28"></a><p class="is-size-7"><span>&copy; 2025 heyu58</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script data-pjax src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script data-pjax src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/mhchem.min.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/javascript" id="MathJax-script" async>MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      chtml: {
+        matchFontHeight: false
+      }
+    };</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script src="/js/pjax.js"></script><!--!--><!--!--><!--!--><script data-pjax src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script data-pjax src="/js/insight.js" defer></script><script data-pjax>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
