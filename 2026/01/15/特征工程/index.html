@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>特征工程心得总结 - heyu Blogs</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="heyu Blogs"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="heyu Blogs"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="在C端业务中，特征工程往往比模型本身更决定最终效果的上限。"><meta property="og:type" content="blog"><meta property="og:title" content="特征工程心得总结"><meta property="og:url" content="http://example.com/2026/01/15/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/"><meta property="og:site_name" content="heyu Blogs"><meta property="og:description" content="在C端业务中，特征工程往往比模型本身更决定最终效果的上限。"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://example.com/img/og_image.png"><meta property="article:published_time" content="2026-01-15T02:08:35.567Z"><meta property="article:modified_time" content="2026-01-15T03:24:25.483Z"><meta property="article:author" content="heyu58"><meta property="article:tag" content="数据分析"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2026/01/15/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/"},"headline":"特征工程心得总结","image":["http://example.com/img/og_image.png"],"datePublished":"2026-01-15T02:08:35.567Z","dateModified":"2026-01-15T03:24:25.483Z","author":{"@type":"Person","name":"heyu58"},"publisher":{"@type":"Organization","name":"heyu Blogs","logo":{"@type":"ImageObject","url":"http://example.com/img/logo.svg"}},"description":"在C端业务中，特征工程往往比模型本身更决定最终效果的上限。"}</script><link rel="canonical" href="http://example.com/2026/01/15/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="heyu Blogs" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/heyu58"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2026-01-15T02:08:35.567Z" title="15/01/2026, 10:08:35">2026-01-15</time>发表</span><span class="level-item"><time dateTime="2026-01-15T03:24:25.483Z" title="15/01/2026, 11:24:25">2026-01-15</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6%E7%B3%BB%E5%88%97/">统计学系列</a></span><span class="level-item">16 分钟读完 (大约2472个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">特征工程心得总结</h1><div class="content"><p>在C端业务中，特征工程往往比模型本身更决定最终效果的上限。</p>
+<span id="more"></span>
+
+<h1 id="C端数据分析中的结构化特征工程：从统计学视角的完整实践指南"><a href="#C端数据分析中的结构化特征工程：从统计学视角的完整实践指南" class="headerlink" title="C端数据分析中的结构化特征工程：从统计学视角的完整实践指南"></a>C端数据分析中的结构化特征工程：从统计学视角的完整实践指南</h1><p>在C端业务中，特征工程往往比模型本身更决定最终效果的上限。</p>
+<p>为什么这么说？因为C端数据通常具有以下几个典型特征：</p>
+<ul>
+<li>高噪声（用户行为极度随机）</li>
+<li>非平稳（节假日、版本迭代、热点事件、竞品动作都会造成分布剧烈漂移）</li>
+<li>高基数类别（商品、内容、用户兴趣标签、搜索词等）</li>
+<li>强时序性 + 强交互性（用户-内容、用户-商品、用户-用户之间的交叉行为）</li>
+<li>严重长尾分布（头部20%内容&#x2F;商品贡献80%+曝光与点击）</li>
+</ul>
+<p>这些特性决定了：<strong>C端模型对特征的依赖程度远高于B端模型</strong>，也决定了特征工程必须有更强的结构化思维和统计学纪律。</p>
+<p>本文尝试从统计学的视角，把C端特征工程拆解成四个清晰且可落地的模块，并给出每个模块的核心统计考量、常见陷阱、C端典型做法，以及监控与迭代的闭环思路。</p>
+<h2 id="一、特征理解与探索：先花80-的时间搞清楚“这是什么数据”"><a href="#一、特征理解与探索：先花80-的时间搞清楚“这是什么数据”" class="headerlink" title="一、特征理解与探索：先花80%的时间搞清楚“这是什么数据”"></a>一、特征理解与探索：先花80%的时间搞清楚“这是什么数据”</h2><p>C端数据分析中最常见的死亡方式之一就是：<strong>还没搞清楚数据在讲什么故事，就开始疯狂堆特征</strong>。</p>
+<h3 id="1-1-业务语义与因果假设先行"><a href="#1-1-业务语义与因果假设先行" class="headerlink" title="1.1 业务语义与因果假设先行"></a>1.1 业务语义与因果假设先行</h3><p>在动手之前，先回答这几个问题（建议写下来）：</p>
+<ul>
+<li>目标变量到底在衡量什么？（是次留、首日付费、7日LTV、内容消费时长、单次session深度、分享率……）</li>
+<li>这个目标受哪些核心环节驱动？（曝光 → 点击 → 停留 → 交互 → 转化）</li>
+<li>哪些是可控因素？哪些是不可控的混杂因素？</li>
+<li>时间窗口如何切分才符合业务节奏？（短视频可能是分钟级，电商可能是自然日&#x2F;自然周）</li>
+</ul>
+<h3 id="1-2-必须做的分布与代表性诊断（C端最容易翻车的点）"><a href="#1-2-必须做的分布与代表性诊断（C端最容易翻车的点）" class="headerlink" title="1.2 必须做的分布与代表性诊断（C端最容易翻车的点）"></a>1.2 必须做的分布与代表性诊断（C端最容易翻车的点）</h3><table>
+<thead>
+<tr>
+<th>检查维度</th>
+<th>推荐统计工具&#x2F;方法</th>
+<th>C端常见异常表现</th>
+<th>建议处理方向</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>缺失比例与模式</td>
+<td>missingno、按时间&#x2F;设备&#x2F;版本分组缺失率热图</td>
+<td>新用户&#x2F;低活跃用户缺失率显著更高</td>
+<td>MAR假设下多用模型插补，MNAR慎删</td>
+</tr>
+<tr>
+<td>异常值（点击率、停留时长）</td>
+<td>IQR×1.5&#x2F;3、孤立森林、极值分位点业务规则</td>
+<td>0.1%用户贡献了30%总时长</td>
+<td>winsorize &#x2F; 业务规则截断 &#x2F; 分模型</td>
+</tr>
+<tr>
+<td>长尾分布严重程度</td>
+<td>洛伦兹曲线、基尼系数、头部10%&#x2F;1%占比</td>
+<td>Top 1%内容占总播放量60%+</td>
+<td>log变换、分桶、target encoding</td>
+</tr>
+<tr>
+<td>时间趋势与周期性</td>
+<td>按自然日&#x2F;周&#x2F;小时聚合目标变量折线图 + STL分解</td>
+<td>周末&#x2F;节假日&#x2F;晚高峰明显抬升</td>
+<td>加入节日 dummy、周中&#x2F;周末 dummy</td>
+</tr>
+<tr>
+<td>新老用户&#x2F;设备差异</td>
+<td>分群KS检验、PSI</td>
+<td>新用户点击率比老用户低40%+</td>
+<td>新老&#x2F;冷启动&#x2F;设备分桶或分模型</td>
+</tr>
+</tbody></table>
+<p><strong>一句话总结这一步的核心纪律</strong>：<br><strong>任何一次删除、截断、插补、变换之前，都要先用统计检验或可视化确认“这件事对不同子群体是否一致”</strong>。</p>
+<h2 id="二、特征构建与变换：把“脏乱差”的原始行为变成“模型友好”的信号"><a href="#二、特征构建与变换：把“脏乱差”的原始行为变成“模型友好”的信号" class="headerlink" title="二、特征构建与变换：把“脏乱差”的原始行为变成“模型友好”的信号"></a>二、特征构建与变换：把“脏乱差”的原始行为变成“模型友好”的信号</h2><p>C端特征工程80%的战斗力其实发生在这里。</p>
+<h3 id="2-1-数值型特征的统计变换路线图"><a href="#2-1-数值型特征的统计变换路线图" class="headerlink" title="2.1 数值型特征的统计变换路线图"></a>2.1 数值型特征的统计变换路线图</h3><p>C端最常见的数值特征：曝光、点击、完播率、停留秒数、点赞&#x2F;评论&#x2F;分享数、消费金额、连续登录天数……</p>
+<p>推荐的处理路径（优先级从高到低）：</p>
+<ol>
+<li><strong>先做领域常识截断</strong>（比统计方法更重要）<ul>
+<li>最大曝光次数、最大单次停留秒数、单日最大付费金额……</li>
+</ul>
+</li>
+<li><strong>长尾压缩</strong>（几乎必做）<ul>
+<li>log1p(x)</li>
+<li>log1p(x &#x2F; 一些业务分母)</li>
+<li>√x（次之）</li>
+<li>Box-Cox &#x2F; Yeo-Johnson（当你有精力调参时）</li>
+</ul>
+</li>
+<li><strong>分桶（提升可解释性 &amp; 非线性捕捉）</strong><ul>
+<li>等频分桶（最常用）</li>
+<li>监督分桶（卡方、决策树分桶）</li>
+<li>业务分桶（新&#x2F;老、冷&#x2F;温&#x2F;热、0&#x2F;1-5&#x2F;6-20&#x2F;21+……）</li>
+</ul>
+</li>
+<li><strong>标准化 &#x2F; 中心化</strong><ul>
+<li>全局StandardScaler（慎用，C端分布漂移严重）</li>
+<li>GroupBy标准化（按用户、按内容类型、按新老用户……）</li>
+<li>RobustScaler（推荐）</li>
+</ul>
+</li>
+<li><strong>相对值 &#x2F; 比率特征</strong>（C端杀手锏）<ul>
+<li>用户近7日平均点击率 - 全局平均点击率</li>
+<li>该内容近24h完播率 &#x2F; 该作者历史完播率</li>
+<li>当前session停留时长 &#x2F; 该用户历史平均session停留</li>
+</ul>
+</li>
+</ol>
+<h3 id="2-2-类别特征的C端高危处理方式对比"><a href="#2-2-类别特征的C端高危处理方式对比" class="headerlink" title="2.2 类别特征的C端高危处理方式对比"></a>2.2 类别特征的C端高危处理方式对比</h3><table>
+<thead>
+<tr>
+<th>编码方式</th>
+<th>优点</th>
+<th>C端致命缺点</th>
+<th>推荐场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OneHot</td>
+<td>简单、无序假设</td>
+<td>维度爆炸、内存爆炸</td>
+<td>基数&lt;50的强分类（如性别、OS版本）</td>
+</tr>
+<tr>
+<td>Label Encoding</td>
+<td>节省空间</td>
+<td>引入虚假序关系</td>
+<td>有自然序的（如会员等级）</td>
+</tr>
+<tr>
+<td>Frequency</td>
+<td>保留流行度信息</td>
+<td>热门类别主导梯度</td>
+<td>辅助特征</td>
+</tr>
+<tr>
+<td>Target Encoding</td>
+<td>直接引入目标信息</td>
+<td>严重数据泄露 &amp; 过拟合风险</td>
+<td>需要交叉验证&#x2F;噪声&#x2F;平滑</td>
+</tr>
+<tr>
+<td>WOE + IV</td>
+<td>可解释性强、风控体系成熟</td>
+<td>假设单调性、对长尾不友好</td>
+<td>排序&#x2F;召回粗排阶段</td>
+</tr>
+<tr>
+<td>Entity Embedding</td>
+<td>捕捉复杂语义关系</td>
+<td>需要大量数据、训练成本高</td>
+<td>头部内容&#x2F;商品&#x2F;用户场景</td>
+</tr>
+</tbody></table>
+<p>C端目前工业界最主流的组合（2024-2025主流打法）：</p>
+<ul>
+<li>高基数离散 → Target Encoding（加噪声&#x2F;交叉验证&#x2F;历史均值平滑）</li>
+<li>中基数离散 → WOE &#x2F; Count + Log &#x2F; Frequency</li>
+<li>超高基数（搜索词、商品标题）→ 先做Text Embedding → 再聚类&#x2F;降维&#x2F;直接作为稠密特征</li>
+</ul>
+<h3 id="2-3-C端最有杀伤力的几类统计聚合特征"><a href="#2-3-C端最有杀伤力的几类统计聚合特征" class="headerlink" title="2.3 C端最有杀伤力的几类统计聚合特征"></a>2.3 C端最有杀伤力的几类统计聚合特征</h3><ol>
+<li>用户行为序列统计（近N天&#x2F;次）<ul>
+<li>近7&#x2F;14&#x2F;30&#x2F;60&#x2F;90日 曝光&#x2F;点击&#x2F;完播&#x2F;点赞&#x2F;分享&#x2F;收藏&#x2F;关注&#x2F;付费 次数 &amp; 金额</li>
+<li>上述指标的环比&#x2F;同比变化率</li>
+<li>方差、偏度、峰度（捕捉用户波动性）</li>
+</ul>
+</li>
+<li>内容&#x2F;商品侧热度统计（时间衰减重要）<ul>
+<li>过去1h&#x2F;3h&#x2F;6h&#x2F;12h&#x2F;24h&#x2F;3d&#x2F;7d 的曝光&#x2F;点击&#x2F;完播&#x2F;互动量（指数衰减或幂律衰减）</li>
+<li>热度排名百分位（rank percentile）</li>
+</ul>
+</li>
+<li>交叉统计（用户×内容双维度）<ul>
+<li>用户对该作者&#x2F;该一级类目&#x2F;该二级类目的历史偏好度</li>
+<li>用户对相似内容（embedding余弦相似度TopK）的平均行为</li>
+</ul>
+</li>
+</ol>
+<h2 id="三、特征选择与评估：C端宁可多也不愿漏，但必须有纪律"><a href="#三、特征选择与评估：C端宁可多也不愿漏，但必须有纪律" class="headerlink" title="三、特征选择与评估：C端宁可多也不愿漏，但必须有纪律"></a>三、特征选择与评估：C端宁可多也不愿漏，但必须有纪律</h2><p>C端常见误区：特征从300个堆到3000个，以为越多越好。</p>
+<p><strong>统计学真实世界经验</strong>：特征超过一定量级后，边际收益快速递减，而方差爆炸、训练时间指数增长、线上稳定性下降。</p>
+<p>推荐分三层做特征筛选：</p>
+<p><strong>层1：粗筛（快、无模型）</strong><br>方差阈值 + 缺失率阈值 + IV值（&gt;0.02） + 单变量 spearman &#x2F; AUC &gt; 0.52~0.55</p>
+<p><strong>层2：模型内嵌筛选（中速、有信号）</strong>  </p>
+<ul>
+<li>LightGBM &#x2F; XGBoost &#x2F; CatBoost 的 gain &#x2F; split &#x2F; cover 重要性</li>
+<li>permutation importance（更可靠但更慢）</li>
+<li>SHAP value 全局重要性排序</li>
+</ul>
+<p><strong>层3：精选 + 稳定性验证</strong>  </p>
+<ul>
+<li>Boruta（基于影子特征）</li>
+<li>Recursive Feature Elimination（RFE）</li>
+<li>在最近3-6个月不同时间窗口上跑重要性，保留稳定性高的特征（排名方差小的）</li>
+</ul>
+<h2 id="四、特征监控与迭代：C端特征就是“活的”"><a href="#四、特征监控与迭代：C端特征就是“活的”" class="headerlink" title="四、特征监控与迭代：C端特征就是“活的”"></a>四、特征监控与迭代：C端特征就是“活的”</h2><p>C端特征衰减速度远超B端。</p>
+<p>必须建立的监控体系（建议每周&#x2F;双周跑一次）：</p>
+<ol>
+<li><p><strong>单特征健康度</strong></p>
+<ul>
+<li>PSI（分训练&#x2F;验证&#x2F;线上最近7&#x2F;14&#x2F;30天）</li>
+<li>IV值随时间衰减曲线</li>
+<li>单特征预测力（AUC &#x2F; normalized gini）衰减</li>
+</ul>
+</li>
+<li><p><strong>群体分布漂移</strong></p>
+<ul>
+<li>新老用户分群PSI</li>
+<li>不同内容垂类PSI</li>
+<li>不同地域&#x2F;设备PSI</li>
+</ul>
+</li>
+<li><p><strong>特征重要性漂移</strong></p>
+<ul>
+<li>Top30特征重要性排名相关系数（spearman）</li>
+<li>新增Top10特征的来源分析（是新构造？还是老特征突然崛起？）</li>
+</ul>
+</li>
+<li><p><strong>业务指标代理</strong></p>
+<ul>
+<li>线上KS &#x2F; NDCG@K &#x2F; Recall@K &#x2F; GMV &#x2F; DAU 等随时间变化</li>
+<li>是否能找到特征端的变化解释业务指标变化</li>
+</ul>
+</li>
+</ol>
+<p><strong>迭代节奏建议（C端真实经验）</strong>：</p>
+<ul>
+<li>每周：跑一次全量特征重要性 &amp; PSI看板</li>
+<li>每两周：补充&#x2F;替换5-15个新特征（通常来自业务新玩法、新曝光策略、新内容类型）</li>
+<li>每1-2个月：做一次全量特征池清洗（删除持续3个月贡献度&lt;1%的特征）</li>
+<li>每季度：重新跑一次 embedding &#x2F; 图网络 &#x2F; 序列模型，刷新稠密特征</li>
+</ul>
+<p>最后用一句话总结C端特征工程的统计学本质：</p>
+<p><strong>用最严格的统计纪律和时间稳定性要求，去对抗C端最严重的噪声、非平稳、长尾与高基数，最终让模型看到的是一个相对“干净、平稳、可解释”的信号世界。</strong></p>
+<p>（全文完）</p>
+</div><div class="article-licensing box"><div class="licensing-title"><p>特征工程心得总结</p><p><a href="http://example.com/2026/01/15/特征工程/">http://example.com/2026/01/15/特征工程/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>heyu58</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2026-01-15</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2026-01-15</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="tagsd:\Blogs\source\img\wechat.jpg/数据分析/">数据分析</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://github.com/apps/utterances" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechat.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2026/01/19/pytorch-trick/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">pytorch框架细节</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2025/12/30/agent/"><span class="level-item">Agent智能体</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card" id="comments"><div class="card-content"><h3 class="title is-5">评论</h3><script src="https://utteranc.es/client.js" repo="heyu58/SGR" issue-number="100" label="some-issue-label" theme="github-light" crossorigin="anonymous" async></script></div></div></div><!--!--><div class="column column-right is-4-tablet is-4-desktop is-4-widescreen  order-3 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#C端数据分析中的结构化特征工程：从统计学视角的完整实践指南"><span class="level-left"><span class="level-item">1</span><span class="level-item">C端数据分析中的结构化特征工程：从统计学视角的完整实践指南</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#一、特征理解与探索：先花80-的时间搞清楚“这是什么数据”"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">一、特征理解与探索：先花80%的时间搞清楚“这是什么数据”</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#1-1-业务语义与因果假设先行"><span class="level-left"><span class="level-item">1.1.1</span><span class="level-item">1.1 业务语义与因果假设先行</span></span></a></li><li><a class="level is-mobile" href="#1-2-必须做的分布与代表性诊断（C端最容易翻车的点）"><span class="level-left"><span class="level-item">1.1.2</span><span class="level-item">1.2 必须做的分布与代表性诊断（C端最容易翻车的点）</span></span></a></li></ul></li><li><a class="level is-mobile" href="#二、特征构建与变换：把“脏乱差”的原始行为变成“模型友好”的信号"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">二、特征构建与变换：把“脏乱差”的原始行为变成“模型友好”的信号</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#2-1-数值型特征的统计变换路线图"><span class="level-left"><span class="level-item">1.2.1</span><span class="level-item">2.1 数值型特征的统计变换路线图</span></span></a></li><li><a class="level is-mobile" href="#2-2-类别特征的C端高危处理方式对比"><span class="level-left"><span class="level-item">1.2.2</span><span class="level-item">2.2 类别特征的C端高危处理方式对比</span></span></a></li><li><a class="level is-mobile" href="#2-3-C端最有杀伤力的几类统计聚合特征"><span class="level-left"><span class="level-item">1.2.3</span><span class="level-item">2.3 C端最有杀伤力的几类统计聚合特征</span></span></a></li></ul></li><li><a class="level is-mobile" href="#三、特征选择与评估：C端宁可多也不愿漏，但必须有纪律"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">三、特征选择与评估：C端宁可多也不愿漏，但必须有纪律</span></span></a></li><li><a class="level is-mobile" href="#四、特征监控与迭代：C端特征就是“活的”"><span class="level-left"><span class="level-item">1.4</span><span class="level-item">四、特征监控与迭代：C端特征就是“活的”</span></span></a></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="heyu Blogs" height="28"></a><p class="is-size-7"><span>&copy; 2026 heyu58</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script data-pjax src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script data-pjax src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/mhchem.min.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/javascript" id="MathJax-script" async>MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      chtml: {
+        matchFontHeight: false
+      }
+    };</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script src="/js/pjax.js"></script><!--!--><!--!--><!--!--><script data-pjax src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script data-pjax src="/js/insight.js" defer></script><script data-pjax>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>

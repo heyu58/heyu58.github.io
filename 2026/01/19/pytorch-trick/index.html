@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>pytorch框架细节 - heyu Blogs</title><link rel="manifest" href="/manifest.json"><meta name="application-name" content="heyu Blogs"><meta name="msapplication-TileImage" content="/img/favicon.svg"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="heyu Blogs"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="description" content="记录了在学习DIDL2过程中，从前对深度学习一知半解或者不清楚细节的内容"><meta property="og:type" content="blog"><meta property="og:title" content="pytorch框架细节"><meta property="og:url" content="http://example.com/2026/01/19/pytorch-trick/"><meta property="og:site_name" content="heyu Blogs"><meta property="og:description" content="记录了在学习DIDL2过程中，从前对深度学习一知半解或者不清楚细节的内容"><meta property="og:locale" content="zh_CN"><meta property="og:image" content="http://example.com/img/og_image.png"><meta property="article:published_time" content="2026-01-19T03:02:22.753Z"><meta property="article:modified_time" content="2026-01-19T06:55:39.562Z"><meta property="article:author" content="heyu58"><meta property="article:tag" content="大语言模型"><meta property="article:tag" content="深度学习"><meta property="twitter:card" content="summary"><meta property="twitter:image:src" content="http://example.com/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://example.com/2026/01/19/pytorch-trick/"},"headline":"pytorch框架细节","image":["http://example.com/img/og_image.png"],"datePublished":"2026-01-19T03:02:22.753Z","dateModified":"2026-01-19T06:55:39.562Z","author":{"@type":"Person","name":"heyu58"},"publisher":{"@type":"Organization","name":"heyu Blogs","logo":{"@type":"ImageObject","url":"http://example.com/img/logo.svg"}},"description":"记录了在学习DIDL2过程中，从前对深度学习一知半解或者不清楚细节的内容"}</script><link rel="canonical" href="http://example.com/2026/01/19/pytorch-trick/"><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.0.0/css/all.css"><link data-pjax rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.7.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link data-pjax rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/css/justifiedGallery.min.css"><!--!--><!--!--><!--!--><!--!--><!--!--><style>.pace{-webkit-pointer-events:none;pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none}.pace-inactive{display:none}.pace .pace-progress{background:#3273dc;position:fixed;z-index:2000;top:0;right:100%;width:100%;height:2px}</style><script src="https://cdn.jsdelivr.net/npm/pace-js@1.2.4/pace.min.js"></script><!--!--><!--!--><!-- hexo injector head_end start --><script>
+  (function () {
+      function switchTab() {
+          if (!location.hash) {
+            return;
+          }
+
+          const id = '#' + CSS.escape(location.hash.substring(1));
+          const $tabMenu = document.querySelector(`.tabs a[href="${id}"]`);
+          if (!$tabMenu) {
+            return;
+          }
+
+          const $tabMenuContainer = $tabMenu.parentElement.parentElement;
+          Array.from($tabMenuContainer.children).forEach($menu => $menu.classList.remove('is-active'));
+          Array.from($tabMenuContainer.querySelectorAll('a'))
+              .map($menu => document.getElementById($menu.getAttribute("href").substring(1)))
+              .forEach($content => $content.classList.add('is-hidden'));
+
+          if ($tabMenu) {
+              $tabMenu.parentElement.classList.add('is-active');
+          }
+          const $activeTab = document.querySelector(id);
+          if ($activeTab) {
+              $activeTab.classList.remove('is-hidden');
+          }
+      }
+      switchTab();
+      window.addEventListener('hashchange', switchTab, false);
+  })();
+  </script><!-- hexo injector head_end end --><meta name="generator" content="Hexo 7.3.0"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container navbar-container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="heyu Blogs" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/heyu58"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="目录" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="搜索" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta is-size-7 is-uppercase level is-mobile"><div class="level-left"><span class="level-item"><time dateTime="2026-01-19T03:02:22.753Z" title="19/01/2026, 11:02:22">2026-01-19</time>发表</span><span class="level-item"><time dateTime="2026-01-19T06:55:39.562Z" title="19/01/2026, 14:55:39">2026-01-19</time>更新</span><span class="level-item"><a class="link-muted" href="/categories/%E5%9F%BA%E6%9C%AC%E5%8A%9F%E7%B3%BB%E5%88%97/">基本功系列</a></span><span class="level-item">14 分钟读完 (大约2056个字)</span></div></div><h1 class="title is-3 is-size-4-mobile">pytorch框架细节</h1><div class="content"><p>记录了在学习<a target="_blank" rel="noopener" href="https://zh.d2l.ai/index.html">DIDL2</a>过程中，从前对深度学习一知半解或者不清楚细节的内容</p>
+<span id="more"></span>
+
+<h2 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a>预备知识</h2><h3 id="数据操作"><a href="#数据操作" class="headerlink" title="数据操作"></a>数据操作</h3><p>pytorch中运行一些操作可能会导致为新结果分配内存。 例如，如果我们用Y &#x3D; X + Y，我们将取消引用Y指向的张量，而是指向新分配的内存处的张量。</p>
+<p>在下面的例子中，我们用Python的id()函数演示了这一点， 它给我们提供了内存中引用对象的确切地址。 运行Y &#x3D; Y + X后，我们会发现id(Y)指向另一个位置。 这是因为Python首先计算Y + X，为结果分配新的内存，然后使Y指向内存中的这个新位置。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">before = <span class="built_in">id</span>(Y)</span><br><span class="line">Y = Y + X</span><br><span class="line"><span class="built_in">id</span>(Y) == before</span><br><span class="line">before = <span class="built_in">id</span>(X)</span><br><span class="line">X += Y  <span class="comment"># X += Y 和 X[:] = X + Y效果一致，都是在原来的地址重新计算（原地操作，节省内存）</span></span><br><span class="line"><span class="built_in">id</span>(X) == before</span><br></pre></td></tr></table></figure>
+<h3 id="数据预处理"><a href="#数据预处理" class="headerlink" title="数据预处理"></a>数据预处理</h3><p>以pandas包处理为例。*“NaN”*项代表缺失值。 为了处理缺失的数据，典型的方法包括插值法和删除法， 其中插值法用一个替代值弥补缺失值，而删除法则直接忽略缺失值。 在删除法中，<strong>需要注意的是确定缺失类型，是否是有条件缺失</strong></p>
+<p>在这里，我们将考虑插值法。通过位置索引iloc，我们将data分成inputs和outputs， 其中前者为data的前两列，而后者为data的最后一列。 对于inputs中缺少的数值，我们用同一列的均值替换“NaN”项。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">inputs, outputs = data.iloc[:, <span class="number">0</span>:<span class="number">2</span>], data.iloc[:, <span class="number">2</span>]</span><br><span class="line">inputs = inputs.fillna(inputs.mean())</span><br><span class="line"><span class="built_in">print</span>(inputs)</span><br></pre></td></tr></table></figure>
+
+<p>对于离散值和类别值，它的值只是起到分类的作用而无数值意义，正确的做法是转换为哑变量，即0-1属性变量</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">inputs = pd.get_dummies(inputs, dummy_na=<span class="literal">True</span>) <span class="comment">#dummy_na表示是否将NaN视为一类</span></span><br><span class="line"><span class="built_in">print</span>(inputs)</span><br></pre></td></tr></table></figure>
+
+<p>由于pandas软件包是Python中常用的数据分析工具，pandas可以与张量兼容。数据转换为张量格式后，可以通过更多张量函数来进一步操作。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">X = torch.tensor(inputs.to_numpy(dtype=<span class="built_in">float</span>))</span><br><span class="line">y = torch.tensor(outputs.to_numpy(dtype=<span class="built_in">float</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="关于张量tensor"><a href="#关于张量tensor" class="headerlink" title="关于张量tensor"></a>关于张量tensor</h3><p>n维数组，也称为张量（tensor）。 例如，向量是一阶张量，矩阵是二阶张量。</p>
+<p>无论使用哪个深度学习框架，它的张量类（在MXNet中为ndarray， 在PyTorch和TensorFlow中为Tensor）都与Numpy的ndarray类似。 但深度学习框架又比Numpy的ndarray多一些重要功能： 首先，GPU很好地支持加速计算，而NumPy仅支持CPU计算； 其次，张量类支持自动微分。 这些功能使得张量类更适合深度学习。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">A = torch.arange(<span class="number">24</span>, dtype=torch.float32).reshape(<span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>) <span class="comment">#常见创建tensor的操作，可指定数值类型</span></span><br><span class="line">A.numel() <span class="comment">#获取张量元素个数</span></span><br><span class="line">sum_A = A.<span class="built_in">sum</span>(axis=<span class="number">1</span>) <span class="comment">#按列求和（对列进行降维求和）</span></span><br><span class="line">sum_A = A.<span class="built_in">sum</span>(axis=<span class="number">1</span>, keepdims=<span class="literal">True</span>) <span class="comment">#（非降维求和）</span></span><br><span class="line">A.cumsum(axis=<span class="number">0</span>) <span class="comment">#沿行轴计算元素累积和</span></span><br><span class="line">torch.mv(A, x) <span class="comment">#矩阵与向量乘积</span></span><br><span class="line">torch.mm(A, B) <span class="comment">#矩阵与矩阵乘积</span></span><br><span class="line"></span><br><span class="line">u = torch.tensor([<span class="number">3.0</span>, -<span class="number">4.0</span>])</span><br><span class="line">torch.norm(u)</span><br></pre></td></tr></table></figure>
+
+<p>更多关于线性代数部分的张量计算可以参考<a target="_blank" rel="noopener" href="https://d2l.ai/chapter_appendix-mathematics-for-deep-learning/geometry-linear-algebraic-ops.html">Geometry and Linear Algebraic Operations</a></p>
+<h3 id="关于导数与微分"><a href="#关于导数与微分" class="headerlink" title="关于导数与微分"></a>关于导数与微分</h3><p>一元函数部分的导数与微分自动跳过，直接来到多元函数的部分，梯度向量由n个偏导数给出：</p>
+<p>$$\nabla_xf(x)&#x3D;\left[\dfrac{\partial f(\mathbf{x})}{x_1},\dfrac{\partial f(\mathbf{x})}{x_2},…\dfrac{\partial f(\mathbf{x})}{x_n}\right]$$</p>
+<ul>
+<li>对所有$\mathbf{A}\in\mathbb{R}^{m\times n}$,都有$\nabla_x\mathbf{Ax}&#x3D;\mathbf{A}^T$</li>
+<li>对所有$\mathbf{A}\in\mathbb{R}^{n\times m}$,都有$\nabla_x\mathbf{x}^T\mathbf{A}&#x3D;\mathbf{A}$</li>
+<li>对所有$\mathbf{A}\in\mathbb{R}^{n\times n}$,都有$\nabla_x\mathbf{x}^T\mathbf{Ax}&#x3D;(\mathbf{A}+\mathbf{A}^T)\mathbf{x}$</li>
+<li>对任何矩阵$\mathbf{A}$，都有$\nabla_{\mathbf{A}}||\mathbf{A}||^2_F&#x3D;2\mathbf{A}$</li>
+</ul>
+<p>求导是几乎所有深度学习优化算法的关键步骤。 虽然求导的计算很简单，只需要一些基本的微积分。 但对于复杂的模型，手工进行更新是一件很痛苦的事情（而且经常容易出错）。</p>
+<p>深度学习框架通过自动计算导数，即<strong>自动微分</strong>（automatic differentiation）来加快求导。 实际中，根据设计好的模型，系统会构建一个计算图（computational graph）， 来跟踪计算是哪些数据通过哪些操作组合起来产生输出。 自动微分使系统能够随后反向传播梯度。 这里，<strong>反向传播backward()</strong>（backpropagate）意味着跟踪整个计算图，填充关于每个参数的偏导数。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">x = torch.arange(<span class="number">4.0</span>)</span><br><span class="line">x.requires_grad_(<span class="literal">True</span>)  <span class="comment"># 等价于x=torch.arange(4.0,requires_grad=True)             </span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;x的默认梯度<span class="subst">&#123;x.grad&#125;</span>&quot;</span>) <span class="comment"># 默认值是None</span></span><br><span class="line"></span><br><span class="line">y1 = x @ x</span><br><span class="line">y1.backward()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;y1 = x@x的梯度<span class="subst">&#123;x.grad&#125;</span>&quot;</span>)</span><br><span class="line">x.grad.zero_()          <span class="comment"># 在默认情况下，PyTorch会累积梯度，我们需要清除之前的值</span></span><br><span class="line"></span><br><span class="line">y2 = x * x</span><br><span class="line">y2.<span class="built_in">sum</span>().backward()     <span class="comment"># 求梯度需要对标量</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&quot;y2 = x*x的梯度<span class="subst">&#123;x.grad&#125;</span>&quot;</span>)</span><br><span class="line">x.grad.zero_() </span><br></pre></td></tr></table></figure>
+
+<p><strong>分离变量detach()</strong> :有时，我们希望将某些计算移动到记录的计算图之外。 例如，假设y是作为x的函数计算的，而z则是作为y和x的函数计算的。 想象一下，我们想计算z关于x的梯度，但由于某种原因，希望将y视为一个常数， 并且只考虑到x在y被计算后发挥的作用。</p>
+<p>这里可以分离y来返回一个新变量u，该变量与y具有相同的值，但丢弃计算图中如何计算y的任何信息。换句话说，梯度不会向后流经u到x。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">x=torch.arange(<span class="number">4.0</span>,requires_grad=<span class="literal">True</span>)   <span class="comment"># 创建带梯度的张量   </span></span><br><span class="line">x.grad.zero_()</span><br><span class="line">y = x * x</span><br><span class="line">u = y.detach()      <span class="comment"># 分离y来返回一个新变量u</span></span><br><span class="line">z = u * x       </span><br><span class="line">z.<span class="built_in">sum</span>().backward()  <span class="comment"># 只计算z关于x的梯度</span></span><br><span class="line">x.grad == u         <span class="comment"># 梯度是否等于分离变量u</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="关于概率"><a href="#关于概率" class="headerlink" title="关于概率"></a>关于概率</h3><p>关于概率学中<em>随机性</em>一词的哲学争论终止于1933年，科尔莫戈罗夫提出概率论公理系统。 有了该公理系统，我们可以避免任何关于随机性的哲学争论； 相反，我们可以用数学语言严格地推理。笔者认为概率论最重要的成果就是两条主线<strong>中心极限定理</strong>和<strong>贝叶斯定理</strong></p>
+<ul>
+<li>中心极限定理：可由特征函数结合斯特林公式推导。对于独立同分布（i.i.d., 即 independent and identically distributed）、且数学期望和方差有限的随机变量序列的标准化和以标准正态分布为极限</li>
+<li>贝叶斯定理：从条件概率出发，Bayes定理（Bayes’ theorem）$P(A|B)&#x3D;\dfrac{P(B|A)P(A)}{P(B)}$</li>
+</ul>
+<p>我们实战演练一下！ 假设一个医生对患者进行艾滋病病毒（HIV）测试。 这个测试是相当准确的，如果患者健康但测试显示他患病，这个概率只有1%； 如果患者真正感染HIV，它永远不会检测不出。 我们使用$D_1$来表示诊断结果（如果阳性，则为1，如果阴性，则为<br>0）， $H$来表示感染艾滋病病毒的状态（如果阳性，则为1，如果阴性，则为0）。</p>
+<p>下面是两种不同的检测方法，请在先验知识$P(H&#x3D;1)&#x3D;0.0015$尝试计算$P(H&#x3D;1|D_1&#x3D;1)$和$P(H&#x3D;1|D_1&#x3D;1,D_2&#x3D;1)$</p>
+<table>
+<thead>
+<tr>
+<th>诊断结果</th>
+<th>H&#x3D;1</th>
+<th>H&#x3D;0</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$P(D_1&#x3D;1|H)$</td>
+<td>1</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>$P(D_1&#x3D;0|H)$</td>
+<td>0</td>
+<td>0.99</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>诊断结果</th>
+<th>H&#x3D;1</th>
+<th>H&#x3D;0</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>$P(D_2&#x3D;1|H)$</td>
+<td>0.98</td>
+<td>0.03</td>
+</tr>
+<tr>
+<td>$P(D_2&#x3D;0|H)$</td>
+<td>0.02</td>
+<td>0.97</td>
+</tr>
+</tbody></table>
+</div><div class="article-licensing box"><div class="licensing-title"><p>pytorch框架细节</p><p><a href="http://example.com/2026/01/19/pytorch-trick/">http://example.com/2026/01/19/pytorch-trick/</a></p></div><div class="licensing-meta level is-mobile"><div class="level-left"><div class="level-item is-narrow"><div><h6>作者</h6><p>heyu58</p></div></div><div class="level-item is-narrow"><div><h6>发布于</h6><p>2026-01-19</p></div></div><div class="level-item is-narrow"><div><h6>更新于</h6><p>2026-01-19</p></div></div><div class="level-item is-narrow"><div><h6>许可协议</h6><p><a class="icons" rel="noopener" target="_blank" title="Creative Commons" href="https://creativecommons.org/"><i class="icon fab fa-creative-commons"></i></a><a class="icons" rel="noopener" target="_blank" title="Attribution" href="https://creativecommons.org/licenses/by/4.0/"><i class="icon fab fa-creative-commons-by"></i></a><a class="icons" rel="noopener" target="_blank" title="Noncommercial" href="https://creativecommons.org/licenses/by-nc/4.0/"><i class="icon fab fa-creative-commons-nc"></i></a></p></div></div></div></div></div><div class="article-tags is-size-7 mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="tagsd:\Blogs\source\img\wechat.jpg/大语言模型/">大语言模型</a><a class="link-muted mr-2" rel="tag" href="tagsd:\Blogs\source\img\wechat.jpg/深度学习/">深度学习</a></div><div class="sharethis-inline-share-buttons"></div><script src="https://github.com/apps/utterances" defer></script></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">喜欢这篇文章？打赏一下作者吧</h3><div class="buttons is-centered"><a class="button donate" data-type="wechat"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>微信</span><span class="qrcode"><img src="/img/wechat.jpg" alt="微信"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2026/01/15/%E7%89%B9%E5%BE%81%E5%B7%A5%E7%A8%8B/"><span class="level-item">特征工程心得总结</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card" id="comments"><div class="card-content"><h3 class="title is-5">评论</h3><script src="https://utteranc.es/client.js" repo="heyu58/SGR" issue-number="100" label="some-issue-label" theme="github-light" crossorigin="anonymous" async></script></div></div></div><!--!--><div class="column column-right is-4-tablet is-4-desktop is-4-widescreen  order-3 is-sticky"><div class="card widget" id="toc" data-type="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">目录</h3><ul class="menu-list"><li><a class="level is-mobile" href="#预备知识"><span class="level-left"><span class="level-item">1</span><span class="level-item">预备知识</span></span></a><ul class="menu-list"><li><a class="level is-mobile" href="#数据操作"><span class="level-left"><span class="level-item">1.1</span><span class="level-item">数据操作</span></span></a></li><li><a class="level is-mobile" href="#数据预处理"><span class="level-left"><span class="level-item">1.2</span><span class="level-item">数据预处理</span></span></a></li><li><a class="level is-mobile" href="#关于张量tensor"><span class="level-left"><span class="level-item">1.3</span><span class="level-item">关于张量tensor</span></span></a></li><li><a class="level is-mobile" href="#关于导数与微分"><span class="level-left"><span class="level-item">1.4</span><span class="level-item">关于导数与微分</span></span></a></li><li><a class="level is-mobile" href="#关于概率"><span class="level-left"><span class="level-item">1.5</span><span class="level-item">关于概率</span></span></a></li></ul></li></ul></div></div><style>#toc .menu-list > li > a.is-active + .menu-list { display: block; }#toc .menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="heyu Blogs" height="28"></a><p class="is-size-7"><span>&copy; 2026 heyu58</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script src="https://cdn.jsdelivr.net/npm/clipboard@2.0.4/dist/clipboard.min.js" defer></script><script>moment.locale("zh-cn");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: true,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script data-pjax src="/js/column.js"></script><script src="/js/animation.js"></script><a id="back-to-top" title="回到顶端" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script data-pjax src="/js/back_to_top.js" defer></script><!--!--><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/cookieconsent@3.1.1/build/cookieconsent.min.js" defer></script><script>window.addEventListener("load", () => {
+      window.cookieconsent.initialise({
+        type: "info",
+        theme: "edgeless",
+        static: false,
+        position: "bottom-left",
+        content: {
+          message: "此网站使用Cookie来改善您的体验。",
+          dismiss: "知道了！",
+          allow: "允许使用Cookie",
+          deny: "拒绝",
+          link: "了解更多",
+          policy: "Cookie政策",
+          href: "https://www.cookiesandyou.com/",
+        },
+        palette: {
+          popup: {
+            background: "#edeff5",
+            text: "#838391"
+          },
+          button: {
+            background: "#4b81e8"
+          },
+        },
+      });
+    });</script><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.10.0/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.8.1/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.css"><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/katex.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/auto-render.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/katex@0.15.1/dist/contrib/mhchem.min.js" defer></script><script>window.addEventListener("load", function() {
+            document.querySelectorAll('[role="article"] > .content').forEach(function(element) {
+                renderMathInElement(element);
+            });
+        });</script><script type="text/javascript" id="MathJax-script" async>MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      chtml: {
+        matchFontHeight: false
+      }
+    };</script><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script><script src="https://cdn.jsdelivr.net/npm/pjax@0.2.8/pjax.min.js"></script><script src="/js/pjax.js"></script><!--!--><!--!--><!--!--><script data-pjax src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="想要查找什么..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script data-pjax src="/js/insight.js" defer></script><script data-pjax>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"想要查找什么...","untitled":"(无标题)","posts":"文章","pages":"页面","categories":"分类","tags":"标签"});
+        });</script></body></html>
