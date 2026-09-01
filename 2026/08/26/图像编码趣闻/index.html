@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>图像编码趣闻 - heyu Blogs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23D9A441'/><text x='50' y='72' font-size='64' text-anchor='middle' fill='%23121212' font-family='Arial, sans-serif' font-weight='700'>hy</text></svg>">
+<meta name="description" content="">
+<meta name="theme-color" content="#121212">
+<meta name="description" content="RGB编码之前一个项目需要开发硬件解码功能，在魔改ffmpeg的时候发现了一个有意思的问题：OpenCV使用的是BGR存储格式。 很出人意料！ 我以为RGB图像概念如此广泛，存储的时候自然也是RGB。事实也确实如此，Matplotlib,PIL&#x2F;Pillow,Pytorch这些常用的包都是默认RGB格式，但是经常会遇到把cv2.imread()结果传输给plt.imshow()时候显示异">
+<meta property="og:type" content="article">
+<meta property="og:title" content="图像编码趣闻">
+<meta property="og:url" content="https://heyu58.github.io/2026/08/26/%E5%9B%BE%E5%83%8F%E7%BC%96%E7%A0%81%E8%B6%A3%E9%97%BB/index.html">
+<meta property="og:site_name" content="heyu Blogs">
+<meta property="og:description" content="RGB编码之前一个项目需要开发硬件解码功能，在魔改ffmpeg的时候发现了一个有意思的问题：OpenCV使用的是BGR存储格式。 很出人意料！ 我以为RGB图像概念如此广泛，存储的时候自然也是RGB。事实也确实如此，Matplotlib,PIL&#x2F;Pillow,Pytorch这些常用的包都是默认RGB格式，但是经常会遇到把cv2.imread()结果传输给plt.imshow()时候显示异">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-26T02:52:42.440Z">
+<meta property="article:modified_time" content="2026-08-26T03:18:25.098Z">
+<meta property="article:author" content="heyu58">
+<meta property="article:tag" content="计算机视觉">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+:root {
+  --accent: #D9A441;
+  --accent-hover: #C08F2F;
+}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+
+<body>
+  <header class="header">
+  <div class="container header-inner">
+    <a class="brand" href="/">heyu Blogs</a>
+    <nav class="nav">
+      
+        <a class="nav-link" href="/">首页</a>
+      
+        <a class="nav-link" href="/archives">归档</a>
+      
+        <a class="nav-link" href="/categories">分类</a>
+      
+    </nav>
+  </div>
+</header>
+
+  <main class="main">
+    <article class="post">
+  <header class="post-header">
+    <div class="container">
+      
+      <h1 class="post-title">图像编码趣闻</h1>
+      <div class="post-meta">
+        <time datetime="2026-08-26T02:52:42.440Z">2026-08-26</time>
+      </div>
+    </div>
+  </header>
+
+  <div class="container post-body-wrap">
+    
+    <div class="post-layout">
+      <div class="post-content">
+        <h3 id="RGB编码"><a href="#RGB编码" class="headerlink" title="RGB编码"></a>RGB编码</h3><p>之前一个项目需要开发硬件解码功能，在魔改ffmpeg的时候发现了一个有意思的问题：OpenCV使用的是BGR存储格式。</p>
+<p>很出人意料！ 我以为RGB图像概念如此广泛，存储的时候自然也是RGB。事实也确实如此，Matplotlib,PIL&#x2F;Pillow,Pytorch这些常用的包都是默认RGB格式，但是经常会遇到把cv2.imread()结果传输给plt.imshow()时候显示异常(如人脸发青色)，看起来原因就这这，B和R的通道内容搞反了。</p>
+<p>果然上网一查，这是CV工程师踩坑最多的基础陷阱之一。通常需要cv2.cvColor()来做转换。看起来是OpenCV早期和硬件协同的时候，为了成像的顺利所以使用了BGR这种格式，沿用至今。</p>
+<h3 id="YUV编码"><a href="#YUV编码" class="headerlink" title="YUV编码"></a>YUV编码</h3><p>YUV色彩空间由表示暗亮程度的信号<em>亮度Y</em>与两个表示颜色的色度信号<em>U</em>和<em>V</em>组成。主要在电视系统常用，为了支持黑白电视（只使用Y信号即可）<br>YUV中比较有意思的是NV12格式。假设有一张图片长h宽w，如果是黑白照片，大小是$w\times h$，如果是RGB格式，大小是$w\times h\times 3$，如果 NV12格式，大小可以变成$w\times h\times\frac{3}{2}$（在UV通道上做了半数采样）。</p>
+
+      </div>
+      
+        <aside class="toc">
+  <div class="toc-title">目录</div>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#RGB%E7%BC%96%E7%A0%81"><span class="toc-text">RGB编码</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#YUV%E7%BC%96%E7%A0%81"><span class="toc-text">YUV编码</span></a></li></ol>
+</aside>
+
+      
+    </div>
+  </div>
+</article>
+
+  </main>
+  <footer class="footer">
+  <div class="container">
+    <p>© 2026 heyu58 · Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></p>
+  </div>
+</footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>

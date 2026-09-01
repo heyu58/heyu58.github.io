@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>0-1背包问题6步搞懂 - heyu Blogs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23D9A441'/><text x='50' y='72' font-size='64' text-anchor='middle' fill='%23121212' font-family='Arial, sans-serif' font-weight='700'>hy</text></svg>">
+<meta name="description" content="">
+<meta name="theme-color" content="#121212">
+<meta name="description" content="背包问题（Knapsack Problem）是组合优化中的 NP 完全问题，最基础的两个变体是 0-1 背包 和 完全背包。它之所以值得反复琢磨，是因为「选 or 不选」的决策模型几乎渗透在每一个日常决策里；而没真正搞懂之前，很容易产生「我已经会了」的错觉。 本文以分割等和子集（LeetCode 416）为例，走完一条完整的演进路线：  递归暴力枚举 $O(2^n)$ → 记忆化递归 → DP 状">
+<meta property="og:type" content="article">
+<meta property="og:title" content="0-1背包问题6步搞懂">
+<meta property="og:url" content="https://heyu58.github.io/2026/09/01/0-1%E8%83%8C%E5%8C%85%E9%97%AE%E9%A2%986%E6%AD%A5%E6%90%9E%E6%87%82/index.html">
+<meta property="og:site_name" content="heyu Blogs">
+<meta property="og:description" content="背包问题（Knapsack Problem）是组合优化中的 NP 完全问题，最基础的两个变体是 0-1 背包 和 完全背包。它之所以值得反复琢磨，是因为「选 or 不选」的决策模型几乎渗透在每一个日常决策里；而没真正搞懂之前，很容易产生「我已经会了」的错觉。 本文以分割等和子集（LeetCode 416）为例，走完一条完整的演进路线：  递归暴力枚举 $O(2^n)$ → 记忆化递归 → DP 状">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2026-08-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2026-09-01T14:38:16.274Z">
+<meta property="article:author" content="heyu58">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<link rel="stylesheet" href="/css/style.css">
+<style>
+:root {
+  --accent: #D9A441;
+  --accent-hover: #C08F2F;
+}
+</style>
+
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']], processEscapes: true },
+  svg: { fontCache: 'global' }
+};
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+
+
+<body>
+  <header class="header">
+  <div class="container header-inner">
+    <a class="brand" href="/">heyu Blogs</a>
+    <nav class="nav">
+      
+        <a class="nav-link" href="/">首页</a>
+      
+        <a class="nav-link" href="/archives">归档</a>
+      
+        <a class="nav-link" href="/categories">分类</a>
+      
+    </nav>
+  </div>
+</header>
+
+  <main class="main">
+    <article class="post">
+  <header class="post-header">
+    <div class="container">
+      
+        <a class="post-category" href="/categories/%E5%9F%BA%E6%9C%AC%E5%8A%9F%E7%B3%BB%E5%88%97/">基本功系列</a>
+      
+      <h1 class="post-title">0-1背包问题6步搞懂</h1>
+      <div class="post-meta">
+        <time datetime="2026-08-31T16:00:00.000Z">2026-09-01</time>
+      </div>
+    </div>
+  </header>
+
+  <div class="container post-body-wrap">
+    
+      <img class="post-thumb" src="/img/algorithm.webp" alt="0-1背包问题6步搞懂">
+    
+    <div class="post-layout">
+      <div class="post-content">
+        <p>背包问题（<strong>Knapsack Problem</strong>）是组合优化中的 NP 完全问题，最基础的两个变体是 <em>0-1 背包</em> 和 <em>完全背包</em>。它之所以值得反复琢磨，是因为「选 or 不选」的决策模型几乎渗透在每一个日常决策里；而没真正搞懂之前，很容易产生「我已经会了」的错觉。</p>
+<p>本文以<strong>分割等和子集</strong>（LeetCode 416）为例，走完一条完整的演进路线：</p>
+<blockquote>
+<p>递归暴力枚举 $O(2^n)$ → 记忆化递归 → DP 状态转移</p>
+</blockquote>
+<p>前六步是主线，最后一步位运算是彩蛋，仅供开阔思路。</p>
+<span id="more"></span>
+
+<h2 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h2><blockquote>
+<p>给你一个只包含正整数的非空数组 <code>nums</code>。判断是否可以将这个数组分割成两个子集，使得两个子集的元素和相等。</p>
+</blockquote>
+<p>例如 <code>nums = [1, 5, 11, 5]</code>，总和为 22，可以分成 <code>[1, 5, 5]</code> 与 <code>[11]</code>，两者和都是 11，返回 <code>True</code>。</p>
+<p>这个问题等价于：<strong>能否从 <code>nums</code> 里选出若干个数，让它们的和恰好等于 <code>total / 2</code></strong>（<code>total</code> 为总和）。这就是一个标准的 0-1 背包判定问题——容量 <code>target = total / 2</code>，每个数的体积等于自身值，问能否恰好装满。若 <code>total</code> 为奇数，必然无法均分，直接返回 <code>False</code>。</p>
+<p>以下所有方法均使用 <code>List</code> 类型注解，LeetCode 环境已默认导入 <code>from typing import List</code>，本地运行请自行补充。</p>
+<h2 id="1、暴力递归：一切的出发点"><a href="#1、暴力递归：一切的出发点" class="headerlink" title="1、暴力递归：一切的出发点"></a>1、暴力递归：一切的出发点</h2><p>不从 DP 直接开始，是因为状态转移方程的「手感」是从递归里长出来的。定义递归函数：</p>
+<p>$$dfs(i, s)&#x3D;\text{从第 }i\text{ 个元素开始考虑，当前已累计和为 }s\text{，能否凑出 }target$$</p>
+<p>对每个元素，递归状态树上有两条边：<strong>选</strong>（<code>pick</code>）或 <strong>不选</strong>（<code>no_pick</code>）。只要有一条路能通，当前状态就为 <code>True</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canPartitionDFS</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        total = <span class="built_in">sum</span>(nums)</span><br><span class="line">        <span class="comment"># 总和为奇数，不可能分割等和</span></span><br><span class="line">        <span class="keyword">if</span> total % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        n, target = <span class="built_in">len</span>(nums), total // <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 暴力枚举，产生递归状态树（二叉）</span></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">dfs</span>(<span class="params">i, s</span>):</span><br><span class="line">            <span class="keyword">if</span> s == target:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">            <span class="comment"># 越界（所有元素已决策完）或超出目标，剪枝</span></span><br><span class="line">            <span class="keyword">if</span> i &gt;= n <span class="keyword">or</span> s &gt; target:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">            <span class="comment"># 每个数都有 pick 和 no_pick 两种选择</span></span><br><span class="line">            pick = dfs(i + <span class="number">1</span>, s + nums[i])</span><br><span class="line">            no_pick = dfs(i + <span class="number">1</span>, s)</span><br><span class="line">            <span class="keyword">return</span> pick <span class="keyword">or</span> no_pick</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dfs(<span class="number">0</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p>两个边界条件值得单独拎出来说：</p>
+<ul>
+<li><code>s == target</code> 是<strong>成功</strong>条件，放在最前面，一旦命中立刻短路；</li>
+<li><code>i &gt;= n or s &gt; target</code> 是<strong>失败</strong>条件。<code>i &gt;= n</code> 表示所有元素都决策完了还没凑够；<code>s &gt; target</code> 是剪枝——因为 <code>nums</code> 全为正数，一旦超了就永远回不来了。</li>
+</ul>
+<p>复杂度：每个元素有两条边，最坏情况状态树有 $2^n$ 个节点，时间复杂度 $O(2^n)$；递归栈深度最多 $n$ 层，空间复杂度 $O(n)$。</p>
+<h2 id="2、记忆化递归：剪掉重复的枝"><a href="#2、记忆化递归：剪掉重复的枝" class="headerlink" title="2、记忆化递归：剪掉重复的枝"></a>2、记忆化递归：剪掉重复的枝</h2><p>暴力递归慢，慢在<strong>大量重复子问题</strong>：<code>dfs(i, s)</code> 的结果只和 <code>(i, s)</code> 有关，和怎么走到这一步无关。同一个 <code>(i, s)</code> 可能被不同的路径重复计算。用一个 <code>mem[i][s]</code> 把算过的结果缓存下来，第二次遇到直接返回。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canPartitionMemoryDFS</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        total = <span class="built_in">sum</span>(nums)</span><br><span class="line">        <span class="keyword">if</span> total % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        n, target = <span class="built_in">len</span>(nums), total // <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># mem[i][s] 记录 dfs(i, s) 的可行性</span></span><br><span class="line">        mem = [[<span class="literal">None</span>] * (target + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n + <span class="number">1</span>)]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">dfs</span>(<span class="params">i, s</span>):</span><br><span class="line">            <span class="keyword">if</span> s == target:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">True</span></span><br><span class="line">            <span class="keyword">if</span> i &gt;= n <span class="keyword">or</span> s &gt; target:</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">            <span class="comment"># 【子问题记忆】命中缓存直接返回</span></span><br><span class="line">            <span class="keyword">if</span> mem[i][s] <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">                <span class="keyword">return</span> mem[i][s]</span><br><span class="line">            pick = dfs(i + <span class="number">1</span>, s + nums[i])</span><br><span class="line">            no_pick = dfs(i + <span class="number">1</span>, s)</span><br><span class="line">            <span class="comment"># 【创建子问题答案】</span></span><br><span class="line">            mem[i][s] = pick <span class="keyword">or</span> no_pick</span><br><span class="line">            <span class="keyword">return</span> mem[i][s]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> dfs(<span class="number">0</span>, <span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p>这里用 <code>None</code> 表示「尚未计算」，而不是用 <code>False</code>——因为 <code>False</code> 是一个合法的计算结果，混用会误判成「没算过」而重复计算。</p>
+<p>复杂度：状态数不超过 $(n+1) \times (target+1)$，每个状态只算一次、代价 $O(1)$，时间复杂度 $O(n \cdot target)$；<code>mem</code> 数组占 $O(n \cdot target)$，递归栈 $O(n)$，空间复杂度 $O(n \cdot target)$。</p>
+<h2 id="3、后缀视角的-DP：自底向上"><a href="#3、后缀视角的-DP：自底向上" class="headerlink" title="3、后缀视角的 DP：自底向上"></a>3、后缀视角的 DP：自底向上</h2><p>观察记忆化递归的调用方向：求 <code>dfs(i, s)</code> 需要先求 <code>dfs(i+1, ...)</code>。也就是说，<strong>答案依赖下标更大的子问题</strong>。把这层依赖关系显式化，就得到 DP 的转移方程，<code>i</code> 需要<strong>从大到小</strong>循环。</p>
+<p>定义 <code>dp[i][s]</code>：处理 <code>nums[i..n-1]</code> 这些数，能否凑出 <code>s</code>（后缀视角）。转移：</p>
+<p>$$dp[i][s] &#x3D; dp[i+1][s]\ \text{or}\ dp[i+1][s+nums[i]]$$</p>
+<p>其中 <code>dp[i+1][s]</code> 是不选 <code>nums[i]</code>，<code>dp[i+1][s+nums[i]]</code> 是选 <code>nums[i]</code>（前提 <code>s + nums[i] &lt;= target</code>）。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canPartitionBackDP</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        total = <span class="built_in">sum</span>(nums)</span><br><span class="line">        <span class="keyword">if</span> total % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        n, target = <span class="built_in">len</span>(nums), total // <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># dp[i][s]：处理 nums[i..n-1]，能否凑出 s</span></span><br><span class="line">        dp = [[<span class="literal">False</span>] * (target + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n + <span class="number">1</span>)]</span><br><span class="line">        <span class="comment"># 哨兵行：处理 0 个元素，只有 s == target 时为 True</span></span><br><span class="line">        <span class="comment"># 这对应递归的 base case「s == target 返回 True」</span></span><br><span class="line">        <span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(target + <span class="number">1</span>):</span><br><span class="line">            dp[n][s] = (s == target)</span><br><span class="line">        <span class="comment"># 自底向上迭代，i 从大到小</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n - <span class="number">1</span>, -<span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">            <span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(target + <span class="number">1</span>):</span><br><span class="line">                <span class="keyword">if</span> s + nums[i] &lt;= target:</span><br><span class="line">                    dp[i][s] = dp[i + <span class="number">1</span>][s] <span class="keyword">or</span> dp[i + <span class="number">1</span>][s + nums[i]]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    dp[i][s] = dp[i + <span class="number">1</span>][s]</span><br><span class="line">        <span class="keyword">return</span> dp[<span class="number">0</span>][<span class="number">0</span>]</span><br></pre></td></tr></table></figure>
+
+<p>三个细节：</p>
+<ol>
+<li><strong>哨兵行 <code>dp[n][s] = (s == target)</code></strong>。<code>dp[n]</code> 表示「已经处理完所有元素」，此刻只有累计和恰好等于 <code>target</code> 才算成功，这正是递归里 <code>if s == target: return True</code> 的 DP 形态。</li>
+<li><strong>转移里的 <code>&lt;= target</code> 不能写成 <code>&lt; target</code></strong>。若漏掉等号，<code>s + nums[i] == target</code> 的路径会被 <code>else</code> 分支吞掉，导致 <code>dp[n][target]</code> 这个唯一的 <code>True</code> 永远传不上去，最后恒为 <code>False</code>。</li>
+<li><strong><code>False</code> 与 <code>None</code> 的区别</strong>。这里默认值用 <code>False</code> 而非 <code>None</code>，因为 DP 是自底向上把所有状态都算一遍，不存在「没算过」的状态，也就不需要 <code>None</code> 做标记。</li>
+</ol>
+<p>复杂度与记忆化相同：时间 $O(n \cdot target)$，空间 $O(n \cdot target)$。</p>
+<h2 id="4、前缀视角的-DP：从前往后"><a href="#4、前缀视角的-DP：从前往后" class="headerlink" title="4、前缀视角的 DP：从前往后"></a>4、前缀视角的 DP：从前往后</h2><p>后缀视角不太直观，更多人习惯「前 $i$ 个元素」的前缀视角。把定义改成：</p>
+<p>$$dp[i][s]&#x3D;\text{前 }i\text{ 个元素 }nums[0..i-1]\text{ 能否凑出 }s$$</p>
+<p>转移方程对称地变为：</p>
+<p>$$dp[i][s] &#x3D; dp[i-1][s-nums[i-1]]\ \text{or}\ dp[i-1][s]$$</p>
+<p>下标 <code>i-1</code> 是当前正在决策的元素，<code>dp[i-1][s-nums[i-1]]</code> 是选它，<code>dp[i-1][s]</code> 是不选它。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canPartitionDP</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        total = <span class="built_in">sum</span>(nums)</span><br><span class="line">        <span class="keyword">if</span> total % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        n, target = <span class="built_in">len</span>(nums), total // <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># dp[i][s]：前 i 个元素 nums[0..i-1]，能否凑出 s</span></span><br><span class="line">        dp = [[<span class="literal">False</span>] * (target + <span class="number">1</span>) <span class="keyword">for</span> _ <span class="keyword">in</span> <span class="built_in">range</span>(n + <span class="number">1</span>)]</span><br><span class="line">        dp[<span class="number">0</span>][<span class="number">0</span>] = <span class="literal">True</span>  <span class="comment"># 0 个元素可以凑出 0</span></span><br><span class="line">        <span class="comment"># 从前往后迭代</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">            <span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(target + <span class="number">1</span>):</span><br><span class="line">                <span class="keyword">if</span> s - nums[i - <span class="number">1</span>] &gt;= <span class="number">0</span>:</span><br><span class="line">                    <span class="comment"># 选 nums[i-1]</span></span><br><span class="line">                    dp[i][s] = dp[i - <span class="number">1</span>][s - nums[i - <span class="number">1</span>]] <span class="keyword">or</span> dp[i - <span class="number">1</span>][s]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    <span class="comment"># 不选 nums[i-1]</span></span><br><span class="line">                    dp[i][s] = dp[i - <span class="number">1</span>][s]</span><br><span class="line">        <span class="keyword">return</span> dp[-<span class="number">1</span>][-<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>初始化 <code>dp[0][0] = True</code>（0 个元素凑出 0），这也是递归里 <code>s == target</code> 在对偶视角下的边界。<code>dp[-1][-1]</code> 即 <code>dp[n][target]</code>。</p>
+<h2 id="5、两行滚动数组：先砍掉一个维度"><a href="#5、两行滚动数组：先砍掉一个维度" class="headerlink" title="5、两行滚动数组：先砍掉一个维度"></a>5、两行滚动数组：先砍掉一个维度</h2><p>观察前缀 DP 的转移：<code>dp[i]</code> 只依赖 <code>dp[i-1]</code>，更早的行永远不再被访问。既然只用到上一行，就用 <code>prev</code> 和 <code>curr</code> 两个一维数组轮流替换，把空间从 $O(n \cdot target)$ 降到 $O(target)$。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canPartitionDP_Optimize</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        total = <span class="built_in">sum</span>(nums)</span><br><span class="line">        <span class="keyword">if</span> total % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        n, target = <span class="built_in">len</span>(nums), total // <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        prev = [<span class="literal">False</span>] * (target + <span class="number">1</span>)</span><br><span class="line">        prev[<span class="number">0</span>] = <span class="literal">True</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>, n + <span class="number">1</span>):</span><br><span class="line">            curr = [<span class="literal">False</span>] * (target + <span class="number">1</span>)</span><br><span class="line">            <span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(target + <span class="number">1</span>):</span><br><span class="line">                <span class="keyword">if</span> s - nums[i - <span class="number">1</span>] &gt;= <span class="number">0</span>:</span><br><span class="line">                    curr[s] = prev[s - nums[i - <span class="number">1</span>]] <span class="keyword">or</span> prev[s]</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    curr[s] = prev[s]</span><br><span class="line">            prev = curr</span><br><span class="line">        <span class="keyword">return</span> curr[-<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+<h2 id="6、一维-DP-与反向遍历"><a href="#6、一维-DP-与反向遍历" class="headerlink" title="6、一维 DP 与反向遍历"></a>6、一维 DP 与反向遍历</h2><p>还能再进一步：<strong>连 <code>curr</code> 也不要，就地复用 <code>prev</code> 一个数组</strong>。关键矛盾在于——<code>dp[s]</code> 的更新要用到上一轮的旧值，如果从小的 <code>s</code> 正向更新，小的 <code>s</code> 先被改写，后面大的 <code>s</code> 读到的就是<strong>本轮</strong>已污染的值，等于把同一个物品用了多次，退化成完全背包。</p>
+<p>解法是<strong>反向遍历</strong>：让 <code>s</code> 从大到小更新，保证计算 <code>dp[s]</code> 时，<code>dp[s - nums[i-1]]</code> 还停留在上一轮、尚未被本轮改写。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canPartitionDP_Final</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        total = <span class="built_in">sum</span>(nums)</span><br><span class="line">        <span class="keyword">if</span> total % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        target = total // <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        dp = [<span class="literal">False</span>] * (target + <span class="number">1</span>)</span><br><span class="line">        dp[<span class="number">0</span>] = <span class="literal">True</span>  <span class="comment"># 凑出 0 永远可行</span></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> nums:</span><br><span class="line">            <span class="comment"># 反向遍历：保证 dp[s - x] 读到的还是上一轮（未选 x）的旧值</span></span><br><span class="line">            <span class="keyword">for</span> s <span class="keyword">in</span> <span class="built_in">range</span>(target, x - <span class="number">1</span>, -<span class="number">1</span>):</span><br><span class="line">                dp[s] = dp[s] <span class="keyword">or</span> dp[s - x]</span><br><span class="line">        <span class="keyword">return</span> dp[-<span class="number">1</span>]</span><br></pre></td></tr></table></figure>
+
+<p>两个容易写错的点：</p>
+<ol>
+<li><strong><code>dp[0] = True</code> 不能漏</strong>。不选任何数凑出 0，是所有状态的起点。</li>
+<li><strong>等式右边是 <code>dp[s]</code>，不是某个别的下标</strong>。这里的 <code>dp[s]</code> 代表「不选 <code>x</code>」的旧状态，<code>dp[s - x]</code> 代表「选 <code>x</code>」的旧状态，二者取或。<code>range(target, x - 1, -1)</code> 同时保证了 <code>s - x &gt;= 0</code>，省去了显式的越界判断。</li>
+</ol>
+<p>顺带一提，0-1 背包与完全背包的一维代码长得几乎一样，唯一区别就是遍历方向：<strong>0-1 背包反向（每个物品只用一次），完全背包正向（物品可无限用）</strong>。理解了反向遍历的动机，就能记住这个方向。</p>
+<h2 id="7、彩蛋：位运算-bitset"><a href="#7、彩蛋：位运算-bitset" class="headerlink" title="7、彩蛋：位运算 bitset"></a>7、彩蛋：位运算 bitset</h2><p>判定型背包本质上是在维护一个「哪些和可以凑出来」的集合。用一个二进制数 <code>f</code> 表示这个集合：<strong><code>f</code> 的第 <code>s</code> 位为 1，表示能凑出 <code>s</code></strong>。初始 <code>f = 1</code>（只有第 0 位为 1，能凑出 0）。对每个物品 <code>x</code>：</p>
+<p>$$f &#x3D; f\ |\ (f \ll x)$$</p>
+<p><code>f &lt;&lt; x</code> 把当前所有可凑出的和整体加 <code>x</code>，代表「选这个物品」；再和 <code>f</code> 取或，代表「不选」的分支也保留。最后看 <code>f</code> 的第 <code>target</code> 位是否为 1。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canPartition</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        s = <span class="built_in">sum</span>(nums)</span><br><span class="line">        <span class="keyword">if</span> s % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        s //= <span class="number">2</span></span><br><span class="line">        f = <span class="number">1</span></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> nums:</span><br><span class="line">            f |= f &lt;&lt; x</span><br><span class="line">        <span class="keyword">return</span> (f &gt;&gt; s &amp; <span class="number">1</span>) == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+<p>注意 <code>f &gt;&gt; s &amp; 1</code> 的优先级：移位 <code>&gt;&gt;</code> 高于按位与 <code>&amp;</code>，所以它等价于 <code>(f &gt;&gt; s) &amp; 1</code>，先右移再取最低位。Python 大整数让 <code>f</code> 可以任意长，但单次移位、取或的代价随位数增长，严格来说并不是 $O(1)$；忽略这个常数，它是最紧凑、最「有味道」的写法。</p>
+<h2 id="复杂度一览"><a href="#复杂度一览" class="headerlink" title="复杂度一览"></a>复杂度一览</h2><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>时间复杂度</th>
+<th>空间复杂度</th>
+<th>核心思想</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1 暴力递归</td>
+<td>$O(2^n)$</td>
+<td>$O(n)$</td>
+<td>二叉状态树</td>
+</tr>
+<tr>
+<td>2 记忆化</td>
+<td>$O(n \cdot target)$</td>
+<td>$O(n \cdot target)$</td>
+<td>缓存子问题</td>
+</tr>
+<tr>
+<td>3 后缀 DP</td>
+<td>$O(n \cdot target)$</td>
+<td>$O(n \cdot target)$</td>
+<td>自底向上</td>
+</tr>
+<tr>
+<td>4 前缀 DP</td>
+<td>$O(n \cdot target)$</td>
+<td>$O(n \cdot target)$</td>
+<td>自顶向下</td>
+</tr>
+<tr>
+<td>5 两行滚动</td>
+<td>$O(n \cdot target)$</td>
+<td>$O(target)$</td>
+<td>只存两行</td>
+</tr>
+<tr>
+<td>6 一维 DP</td>
+<td>$O(n \cdot target)$</td>
+<td>$O(target)$</td>
+<td>就地复用 + 反向</td>
+</tr>
+<tr>
+<td>7 位运算</td>
+<td>$O(n \cdot target&#x2F;w)$</td>
+<td>$O(target&#x2F;w)$</td>
+<td>bitset（$w$ 为字长）</td>
+</tr>
+</tbody></table>
+<h2 id="课后思考：双约束背包"><a href="#课后思考：双约束背包" class="headerlink" title="课后思考：双约束背包"></a>课后思考：双约束背包</h2><blockquote>
+<p>有 $n$ 个任务，系统最多提供 $A$ 单位内存和 $B$ 单位算力。第 $i$ 个任务执行消耗 $x_i$ 单位内存、$y_i$ 单位算力，获得收益 $w_i$。选择若干任务执行以最大化总收益；在收益最大的所有方案中，优先内存总消耗更小的，若仍相同则优先算力总消耗更小的。</p>
+</blockquote>
+<p>这是把背包的容量从一维扩展到二维：状态既要限内存，又要限算力。记 <code>dp[a][b]</code> 为「内存不超过 $a$、算力不超过 $b$ 时能取得的最大收益」，转移时对每个任务、两个维度都要<strong>反向遍历</strong>，避免重复使用：</p>
+<p>$$dp[a][b] &#x3D; \max\big(dp[a][b],\ dp[a-x_i][b-y_i] + w_i\big)$$</p>
+<p>空间优化：<code>a</code>、<code>b</code> 两个维度都反向遍历，直接在一张二维 <code>dp</code> 表上原地更新即可，无需三维。真正难点在第二个要求——<strong>字典序比较</strong>。收益相同要比较两个消耗，一个常用技巧是：额外维护一张同尺寸的 <code>cost[a][b]</code> 记录「取得 <code>dp[a][b]</code> 这份收益时的总内存消耗」，当 <code>dp[a][b]</code> 被某个方案追平时，比较该方案的内存消耗是否更小，是则更新 <code>cost[a][b]</code>（算力同理作为第二关键字）。这样把「多关键字比较」拆成 DP 值之外的辅助表，比在 DP 值里编码字典序更清晰，也更好调试。</p>
+
+      </div>
+      
+        <aside class="toc">
+  <div class="toc-title">目录</div>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BE%8B%E9%A2%98"><span class="toc-text">例题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E6%9A%B4%E5%8A%9B%E9%80%92%E5%BD%92%EF%BC%9A%E4%B8%80%E5%88%87%E7%9A%84%E5%87%BA%E5%8F%91%E7%82%B9"><span class="toc-text">1、暴力递归：一切的出发点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E8%AE%B0%E5%BF%86%E5%8C%96%E9%80%92%E5%BD%92%EF%BC%9A%E5%89%AA%E6%8E%89%E9%87%8D%E5%A4%8D%E7%9A%84%E6%9E%9D"><span class="toc-text">2、记忆化递归：剪掉重复的枝</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E5%90%8E%E7%BC%80%E8%A7%86%E8%A7%92%E7%9A%84-DP%EF%BC%9A%E8%87%AA%E5%BA%95%E5%90%91%E4%B8%8A"><span class="toc-text">3、后缀视角的 DP：自底向上</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E5%89%8D%E7%BC%80%E8%A7%86%E8%A7%92%E7%9A%84-DP%EF%BC%9A%E4%BB%8E%E5%89%8D%E5%BE%80%E5%90%8E"><span class="toc-text">4、前缀视角的 DP：从前往后</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E4%B8%A4%E8%A1%8C%E6%BB%9A%E5%8A%A8%E6%95%B0%E7%BB%84%EF%BC%9A%E5%85%88%E7%A0%8D%E6%8E%89%E4%B8%80%E4%B8%AA%E7%BB%B4%E5%BA%A6"><span class="toc-text">5、两行滚动数组：先砍掉一个维度</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81%E4%B8%80%E7%BB%B4-DP-%E4%B8%8E%E5%8F%8D%E5%90%91%E9%81%8D%E5%8E%86"><span class="toc-text">6、一维 DP 与反向遍历</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7%E3%80%81%E5%BD%A9%E8%9B%8B%EF%BC%9A%E4%BD%8D%E8%BF%90%E7%AE%97-bitset"><span class="toc-text">7、彩蛋：位运算 bitset</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E4%B8%80%E8%A7%88"><span class="toc-text">复杂度一览</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E8%AF%BE%E5%90%8E%E6%80%9D%E8%80%83%EF%BC%9A%E5%8F%8C%E7%BA%A6%E6%9D%9F%E8%83%8C%E5%8C%85"><span class="toc-text">课后思考：双约束背包</span></a></li></ol>
+</aside>
+
+      
+    </div>
+  </div>
+</article>
+
+  </main>
+  <footer class="footer">
+  <div class="container">
+    <p>© 2026 heyu58 · Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a></p>
+  </div>
+</footer>
+
+  <script src="/js/main.js"></script>
+</body>
+</html>
