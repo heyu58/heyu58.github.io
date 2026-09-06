@@ -2,19 +2,19 @@
 <html lang="zh-CN">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>一些有意思的算法题 - heyu Blogs</title>
+<title>巧妙的位运算 - heyu Blogs</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23D9A441'/><text x='50' y='72' font-size='64' text-anchor='middle' fill='%23121212' font-family='Arial, sans-serif' font-weight='700'>hy</text></svg>">
 <meta name="description" content="">
 <meta name="theme-color" content="#121212">
-<meta name="description" content="不想刷LeetCode啊！！！ 言归正传，写代码还是很有意思的事情。我大学读的是数学专业，一开始只觉得写代码是计算机专业该干的事，后来惊奇地发现，有些算法莫名与那些恐怖的数学知识相关，而这些算法都是为了解决一个具体的有趣问题。这里整理一些LeetCode中有趣的题目，更多还是结合数学的内容。">
+<meta name="description" content="不想刷LeetCode啊！！！ 言归正传，写代码还是很有意思的事情。我大学读的是数学专业，只觉得写代码是计算机专业该干的事，后来惊奇地发现，所谓算法不过是数学知识的计算机实现。当用算法解决了一个有趣的具体问题，只觉得神清气爽。这里整理了位运算的一些妙用。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一些有意思的算法题">
+<meta property="og:title" content="巧妙的位运算">
 <meta property="og:url" content="https://heyu58.github.io/2025/12/11/%E4%B8%80%E4%BA%9B%E6%9C%89%E6%84%8F%E6%80%9D%E7%9A%84%E7%AE%97%E6%B3%95%E9%A2%98/index.html">
 <meta property="og:site_name" content="heyu Blogs">
-<meta property="og:description" content="不想刷LeetCode啊！！！ 言归正传，写代码还是很有意思的事情。我大学读的是数学专业，一开始只觉得写代码是计算机专业该干的事，后来惊奇地发现，有些算法莫名与那些恐怖的数学知识相关，而这些算法都是为了解决一个具体的有趣问题。这里整理一些LeetCode中有趣的题目，更多还是结合数学的内容。">
+<meta property="og:description" content="不想刷LeetCode啊！！！ 言归正传，写代码还是很有意思的事情。我大学读的是数学专业，只觉得写代码是计算机专业该干的事，后来惊奇地发现，所谓算法不过是数学知识的计算机实现。当用算法解决了一个有趣的具体问题，只觉得神清气爽。这里整理了位运算的一些妙用。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-12-11T09:31:10.780Z">
-<meta property="article:modified_time" content="2026-08-23T05:45:40.738Z">
+<meta property="article:modified_time" content="2026-09-04T09:19:33.778Z">
 <meta property="article:author" content="heyu58">
 <meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
@@ -56,7 +56,7 @@ window.MathJax = {
   <header class="post-header">
     <div class="container">
       
-      <h1 class="post-title">一些有意思的算法题</h1>
+      <h1 class="post-title">巧妙的位运算</h1>
       <div class="post-meta">
         <time datetime="2025-12-11T09:31:10.780Z">2025-12-11</time>
       </div>
@@ -65,37 +65,95 @@ window.MathJax = {
 
   <div class="container post-body-wrap">
     
-      <img class="post-thumb" src="/img/algorithm.webp" alt="一些有意思的算法题">
+      <img class="post-thumb" src="/img/algorithm.webp" alt="巧妙的位运算">
     
     <div class="post-layout">
       <div class="post-content">
         <p>不想刷LeetCode啊！！！</p>
-<p>言归正传，写代码还是很有意思的事情。我大学读的是数学专业，一开始只觉得写代码是计算机专业该干的事，后来惊奇地发现，有些算法莫名与那些恐怖的数学知识相关，而这些算法都是为了解决一个具体的有趣问题。这里整理一些LeetCode中有趣的题目，更多还是结合数学的内容。</p>
+<p>言归正传，写代码还是很有意思的事情。我大学读的是数学专业，只觉得写代码是计算机专业该干的事，后来惊奇地发现，所谓算法不过是数学知识的计算机实现。当用算法解决了一个有趣的具体问题，只觉得神清气爽。这里整理了位运算的一些妙用。</p>
 <span id="more"></span>
 
-<h3 id="Q1-爬楼梯"><a href="#Q1-爬楼梯" class="headerlink" title="Q1: 爬楼梯"></a>Q1: 爬楼梯</h3><p>这个问题我应该是最早在电影《少年班》里看到的，那个神童摇着龟壳，根据掉落铜钱来回答的场景太神棍，印象很深。</p>
-<blockquote>
-<p>假设你正在爬楼梯。需要 n 阶你才能到达楼顶。每次你可以爬 1 或 2 个台阶。你有多少种不同的方法可以爬到楼顶呢？比如2级台阶有两种方法：1+1、2；3级台阶有三种方法：1+1+1、1+2、2+1；</p>
-</blockquote>
-<p>从递归的角度容易考虑到，记上$n$级台阶的方法数量为$f(n)$，那么前一步一定在$n-1$级台阶或者$n-2$级台阶，有$f(n)&#x3D;f(n-1)+f(n-2)$等式成立。这就是斐波那契数列的通项$1,2,3,5,8,13,21….$，自然很容易的写出这样的算法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">climbStairs</span>(<span class="params">self, n: <span class="built_in">int</span></span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="keyword">if</span> n &lt;= <span class="number">2</span>:</span><br><span class="line">            <span class="keyword">return</span> n</span><br><span class="line">        <span class="comment"># Fibonacci-like sequence</span></span><br><span class="line">        first, second = <span class="number">1</span>, <span class="number">2</span></span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">3</span>, n + <span class="number">1</span>):</span><br><span class="line">            first, second = second, first + second</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> second</span><br></pre></td></tr></table></figure>
-<p>事实上对于$f(n)&#x3D;f(n-1)+f(n-2)$的齐次线性递推式，除了用高中在数列中用到的<em>特征方程</em>方法来求出斐波那契数列的通项公式外，还可以将齐次线性递推式写为矩阵，使用矩阵快速幂方法来实现。后者的优势在于，对于某些特殊的非齐次线性递推式，也可以处理。</p>
-<h3 id="Q2-只出现一次的数"><a href="#Q2-只出现一次的数" class="headerlink" title="Q2: 只出现一次的数"></a>Q2: 只出现一次的数</h3><blockquote>
+<h3 id="基础的位运算符号"><a href="#基础的位运算符号" class="headerlink" title="基础的位运算符号"></a>基础的位运算符号</h3><table>
+<thead>
+<tr>
+<th>运算符</th>
+<th>含义</th>
+<th>示例</th>
+<th>等价算数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;&lt;</code></td>
+<td>左移</td>
+<td><code>1&lt;&lt;3</code> &#x3D; <code>8</code></td>
+<td>$1\times 2^3$</td>
+</tr>
+<tr>
+<td><code>&gt;&gt;</code></td>
+<td>右移</td>
+<td><code>8&gt;&gt;3</code> &#x3D; <code>1</code></td>
+<td>$8\div 2^3$</td>
+</tr>
+<tr>
+<td><code>&amp;</code></td>
+<td>按位与</td>
+<td><code>0b101 &amp; 0b110 = 0b100</code></td>
+<td>按比特都为1才为1</td>
+</tr>
+<tr>
+<td><code>ㅣ</code></td>
+<td>按位或</td>
+<td><code>0b101 ㅣ 0b110 = 0b111</code></td>
+<td>按比特任意一个1则为1</td>
+</tr>
+<tr>
+<td><code>^</code></td>
+<td>按位异或</td>
+<td><code>0b101 ^ 0b110 = 0b010</code></td>
+<td>按比特不同为1</td>
+</tr>
+<tr>
+<td><code>~</code></td>
+<td>按位取反</td>
+<td><code>~x</code></td>
+<td>$-x-1$</td>
+</tr>
+</tbody></table>
+<p>基础的使用方法：</p>
+<ul>
+<li><code>a&lt;&lt;b</code>：$a\times2^b$，只适合非负整数（<code>1.0&lt;&lt;b</code>会error），运算速度远快于<code>a*2**b</code></li>
+<li><code>x&gt;&gt;k</code>：$floor(\frac{x}{2^k})$，整数快速除以2的幂次</li>
+<li><code>bin(number)</code>：将十进制数快速转为二进制字符串，<code>bin(5)=&#39;0b101&#39;</code></li>
+<li><code>int(str,2)</code>：将二进制字符串转为整数，<code>int(&#39;101&#39;,2)=5</code></li>
+<li><code>x &amp; 1 == 1</code>：判断是否为奇数，奇数的二进制最后一位必定为1</li>
+<li><code>xㅣ1</code>：常用于对二进制最后一位置赋值1，如<code>5ㅣ1 = 6</code>，通常用于变为最近偶数</li>
+<li><code>binary_num = ((num &amp; (1 &lt;&lt; np.arange(10,-1,-1)))&gt;0).astype(int)</code>：固定位数的二进制转换，</li>
+</ul>
+<h3 id="LeetCode-136-只出现一次的数"><a href="#LeetCode-136-只出现一次的数" class="headerlink" title="LeetCode 136: 只出现一次的数"></a>LeetCode 136: 只出现一次的数</h3><blockquote>
 <p>给你一个 非空 整数数组 nums ，除了某个元素只出现一次以外，其余每个元素均出现两次。找出那个只出现了一次的元素。你必须设计并实现线性时间复杂度的算法来解决此问题，且该算法只使用常量额外空间。</p>
 </blockquote>
 <p>这道题难度easy，但是其解法中的<strong>位运算</strong>方法实在太优雅（依赖于其余数只出现偶数次），让我想起很多年前见到过一个位运算求<em>N皇后</em>问题的牛逼解法。这正好借这个机会展示二进制的魅力。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">singleNumber</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">int</span>:</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        :type nums: List[int]</span></span><br><span class="line"><span class="string">        :rtype: int</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        n = <span class="built_in">len</span>(nums)</span><br><span class="line">        index = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(n):</span><br><span class="line">            <span class="comment"># 异或有结合律和交换律</span></span><br><span class="line">            index ^= nums[i]</span><br><span class="line">        <span class="keyword">return</span> index</span><br></pre></td></tr></table></figure>
-<p>位运算的魅力：</p>
+
+<h3 id="LeetCode-416：分割等和子集"><a href="#LeetCode-416：分割等和子集" class="headerlink" title="LeetCode 416：分割等和子集"></a>LeetCode 416：分割等和子集</h3><p>位运算在状态压缩DP的用法<br>众所周知，状压DP就是把状态压缩成一个01串（本质是二进制数），用以减少DP数组的维数。这里是状压DP中比较常用的操作和其二进制的实现方式。</p>
+<p>假设$a$是十进制下的整数</p>
 <ul>
-<li>binary_num &#x3D; ((num &amp; (1 &lt;&lt; np.arange(10,-1,-1)))&gt;0).astype(int) #利用位运算的二进制计算技巧</li>
-<li>N &amp; (N-1)</li>
+<li>1、获取第$i$位的数字：<code>(a&gt;&gt;i)&amp;1</code>或者<code>a&amp;(1&lt;&lt;i)</code></li>
+<li>2、设置第$i$位为1：<code>a = aㅣ(1&lt;&lt;i)</code>或者<code>aㅣ= (1&lt;&lt;i)</code></li>
+<li>3、设置第$i$位为0：<code>a = a&amp;(~(1&lt;&lt;i))</code></li>
+<li>4、把第$i$位取反：<code>a = a ^ (1&lt;&lt;i)</code></li>
+<li>5、取出一个数的最后一个1：<code>a &amp; (-a)</code></li>
 </ul>
+<p>这样的话，你就可以看懂下面这个用位运算求解一维DP的方法了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Solution</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">canPartition</span>(<span class="params">self, nums: <span class="type">List</span>[<span class="built_in">int</span>]</span>) -&gt; <span class="built_in">bool</span>:</span><br><span class="line">        s = <span class="built_in">sum</span>(nums)</span><br><span class="line">        <span class="keyword">if</span> s % <span class="number">2</span> != <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">False</span></span><br><span class="line">        s //= <span class="number">2</span></span><br><span class="line">        f = <span class="number">1</span></span><br><span class="line">        <span class="keyword">for</span> x <span class="keyword">in</span> nums:</span><br><span class="line">            f |= f &lt;&lt; x</span><br><span class="line">        <span class="keyword">return</span> (f &gt;&gt; s &amp; <span class="number">1</span>) == <span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
 
       </div>
       
         <aside class="toc">
   <div class="toc-title">目录</div>
-  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Q1-%E7%88%AC%E6%A5%BC%E6%A2%AF"><span class="toc-text">Q1: 爬楼梯</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Q2-%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E6%95%B0"><span class="toc-text">Q2: 只出现一次的数</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%9F%BA%E7%A1%80%E7%9A%84%E4%BD%8D%E8%BF%90%E7%AE%97%E7%AC%A6%E5%8F%B7"><span class="toc-text">基础的位运算符号</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LeetCode-136-%E5%8F%AA%E5%87%BA%E7%8E%B0%E4%B8%80%E6%AC%A1%E7%9A%84%E6%95%B0"><span class="toc-text">LeetCode 136: 只出现一次的数</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#LeetCode-416%EF%BC%9A%E5%88%86%E5%89%B2%E7%AD%89%E5%92%8C%E5%AD%90%E9%9B%86"><span class="toc-text">LeetCode 416：分割等和子集</span></a></li></ol>
 </aside>
 
       
